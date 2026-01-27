@@ -77,6 +77,18 @@ public class GenerationConfig
     public string OutputType { get; set; } = "PDF_GAWEB";
 
     /// <summary>
+    /// PDF library to use: "Syncfusion" or "Word"
+    /// </summary>
+    [JsonPropertyName("pdfLibrary")]
+    public string PdfLibrary { get; set; } = "Syncfusion";
+
+    /// <summary>
+    /// Community License Key for Syncfusion to avoid watermarks
+    /// </summary>
+    [JsonPropertyName("syncfusionLicenseKey")]
+    public string? SyncfusionLicenseKey { get; set; }
+
+    /// <summary>
     /// Validates the $type field to ensure this is the correct JSON type
     /// </summary>
     public bool IsValidType() => Type == "GeneradorCartas.GenerationConfig";

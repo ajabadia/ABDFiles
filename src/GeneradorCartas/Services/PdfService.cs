@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-// using Word = NetOffice.WordApi; // Removed for late binding
 
 namespace GeneradorCartas.Services;
 
-public class PdfService
+/// <summary>
+/// Legacy PDF Service using Microsoft Word Interop (Late Binding)
+/// </summary>
+public class PdfService : IPdfService
 {
     public void ConvertDocxToPdf(string inputDocx, string outputPdf)
     {
@@ -27,22 +29,12 @@ public class PdfService
             wordApp.DisplayAlerts = 0; 
 
             // Open document: Open(FileName, ConfirmConversions, ReadOnly, ...)
-            // We pass standard args. Using named parameters via dynamic can be tricky, so we use positional for Open 
-            // or expected defaults.
-            // Open(FileName, [ConfirmConversions], [ReadOnly], [AddToRecentFiles], [PasswordDocument], [PasswordTemplate], [Revert], [WritePasswordDocument], [WritePasswordTemplate], [Format], [Encoding], [Visible], [OpenAndRepair], [DocumentDirection], [NoEncodingDialog], [XMLTransform])
-            
-            // Safer to let defaults handle most, but we want ReadOnly=true, Visible=false
-            // C# dynamic allows named arguments match COM dispatch!
             doc = wordApp.Documents.Open(FileName: inputDocx, ReadOnly: true, Visible: false, AddToRecentFiles: false);
 
             if (doc != null)
             {
                 // ExportAsFixedFormat
                 // 17 = wdExportFormatPDF
-                // 0 = wdExportOptimizeForPrint
-                // 0 = wdExportAllDocument
-                // 0 = wdExportDocumentContent
-                // 0 = wdExportCreateNoBookmarks
                 doc.ExportAsFixedFormat(
                     OutputFileName: outputPdf, 
                     ExportFormat: 17, 
@@ -58,7 +50,7 @@ public class PdfService
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error converting to PDF via Late Binding: {ex.Message}", ex);
+            throw new Exception($"Error converting to PDF via Word Interop: {ex.Message}", ex);
         }
         finally
         {

@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using GeneradorCartas.Services;
 
 namespace GeneradorCartas.Forms;
 
@@ -9,11 +10,13 @@ namespace GeneradorCartas.Forms;
 public class DataPreviewForm : Form
 {
     private readonly string _dataPath;
+    private readonly DataReaderService _dataReader;
     private DataGridView gridData = null!;
 
-    public DataPreviewForm(string dataPath)
+    public DataPreviewForm(string dataPath, DataReaderService dataReader)
     {
         _dataPath = dataPath;
+        _dataReader = dataReader;
         InitializeComponent();
         LoadData();
     }
@@ -88,8 +91,10 @@ public class DataPreviewForm : Form
 
         try
         {
-            var (headers, sample) = Services.DataReaderService.ReadHeadersAndSample(_dataPath);
-            var allData = Services.DataReaderService.ReadAllData(_dataPath);
+            var (headers, sampleRow) = _dataReader.ReadHeadersAndSample(_dataPath);
+            
+            // Limit preview to 1000 rows for performance
+            var allData = _dataReader.StreamData(_dataPath).Take(1000).ToList();
 
             if (headers.Count == 0)
             {
@@ -126,7 +131,7 @@ public class DataPreviewForm : Form
             var lblRowCount = this.Controls.Find("lblRowCount", true).FirstOrDefault() as Label;
             if (lblRowCount != null)
             {
-                lblRowCount.Text = $"{allData.Count} filas, {headers.Count} columnas";
+                lblRowCount.Text = $"{allData.Count} filas mostradas, {headers.Count} columnas";
             }
 
             // Update title

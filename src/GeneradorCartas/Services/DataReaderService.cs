@@ -1,17 +1,37 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Globalization;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace GeneradorCartas.Services;
 
 /// <summary>
-/// Service to read data from CSV or Excel files
+/// Service to read data from CSV or Excel files with streaming support
 /// </summary>
-public static class DataReaderService
+public class DataReaderService
 {
+    private readonly CsvConfiguration _csvConfig;
+
+    public DataReaderService()
+    {
+        _csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            Delimiter = ";",
+            HasHeaderRecord = true,
+            MissingFieldFound = null,
+            HeaderValidated = null
+        };
+    }
+
     /// <summary>
     /// Read headers and sample row from data file (CSV or Excel)
     /// </summary>
-    public static (List<string> Headers, List<string> SampleRow) ReadHeadersAndSample(string filePath)
+    public (List<string> Headers, List<string> SampleRow) ReadHeadersAndSample(string filePath)
     {
         if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             return (new List<string>(), new List<string>());
@@ -25,31 +45,47 @@ public static class DataReaderService
     }
 
     /// <summary>
-    /// Read all data from file as list of dictionaries (column -> value)
+    /// Streams all data from file as an enumerable of dictionaries
     /// </summary>
-    public static List<Dictionary<string, string>> ReadAllData(string filePath)
+    public IEnumerable<Dictionary<string, string>> StreamData(string filePath)
     {
         if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-            return new List<Dictionary<string, string>>();
+            yield break;
 
         string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
         if (ext == ".xlsx")
-            return ReadExcelData(filePath);
+        {
+            foreach (var row in ReadExcelDataStreaming(filePath))
+                yield return row;
+        }
         else
-            return ReadCsvData(filePath);
+        {
+            foreach (var row in ReadCsvDataStreaming(filePath))
+                yield return row;
+        }
     }
 
-    private static (List<string> Headers, List<string> SampleRow) ReadCsvHeadersAndSample(string filePath)
+    private (List<string> Headers, List<string> SampleRow) ReadCsvHeadersAndSample(string filePath)
     {
         try
         {
             using var reader = new StreamReader(filePath);
-            string? headerLine = reader.ReadLine();
-            string? sampleLine = reader.ReadLine();
+            using var csv = new CsvReader(reader, _csvConfig);
+            
+            if (!csv.Read() || !csv.ReadHeader())
+                return (new List<string>(), new List<string>());
 
-            var headers = headerLine?.Split(';').Select(c => c.Trim()).ToList() ?? new List<string>();
-            var sample = sampleLine?.Split(';').Select(c => c.Trim()).ToList() ?? new List<string>();
+            var headers = csv.HeaderRecord?.ToList() ?? new List<string>();
+            
+            var sample = new List<string>();
+            if (csv.Read())
+            {
+                for (int i = 0; i < headers.Count; i++)
+                {
+                    sample.Add(csv.GetField(i) ?? "");
+                }
+            }
 
             return (headers, sample);
         }
@@ -59,7 +95,29 @@ public static class DataReaderService
         }
     }
 
-    private static (List<string> Headers, List<string> SampleRow) ReadExcelHeadersAndSample(string filePath)
+    private IEnumerable<Dictionary<string, string>> ReadCsvDataStreaming(string filePath)
+    {
+        using var reader = new StreamReader(filePath);
+        using var csv = new CsvReader(reader, _csvConfig);
+        
+        if (!csv.Read() || !csv.ReadHeader())
+            yield break;
+
+        var headers = csv.HeaderRecord;
+        if (headers == null) yield break;
+
+        while (csv.Read())
+        {
+            var row = new Dictionary<string, string>();
+            foreach (var header in headers)
+            {
+                row[header] = csv.GetField(header) ?? "";
+            }
+            yield return row;
+        }
+    }
+
+    private (List<string> Headers, List<string> SampleRow) ReadExcelHeadersAndSample(string filePath)
     {
         try
         {
@@ -92,69 +150,37 @@ public static class DataReaderService
         }
     }
 
-    private static List<Dictionary<string, string>> ReadCsvData(string filePath)
+    private IEnumerable<Dictionary<string, string>> ReadExcelDataStreaming(string filePath)
     {
-        var result = new List<Dictionary<string, string>>();
-        try
+        using var doc = SpreadsheetDocument.Open(filePath, false);
+        var workbookPart = doc.WorkbookPart;
+        if (workbookPart == null) yield break;
+
+        var sheet = workbookPart.Workbook.Sheets?.GetFirstChild<Sheet>();
+        if (sheet == null) yield break;
+
+        var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id!);
+        var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+        if (sheetData == null) yield break;
+
+        var rowsEnum = sheetData.Elements<Row>().GetEnumerator();
+        if (!rowsEnum.MoveNext()) yield break;
+
+        var headers = GetRowValues(rowsEnum.Current, workbookPart);
+
+        while (rowsEnum.MoveNext())
         {
-            var lines = File.ReadAllLines(filePath);
-            if (lines.Length < 2) return result;
-
-            var headers = lines[0].Split(';').Select(h => h.Trim()).ToArray();
-
-            for (int i = 1; i < lines.Length; i++)
+            var values = GetRowValues(rowsEnum.Current, workbookPart);
+            var row = new Dictionary<string, string>();
+            for (int j = 0; j < headers.Count && j < values.Count; j++)
             {
-                if (string.IsNullOrWhiteSpace(lines[i])) continue;
-                var values = lines[i].Split(';');
-                var row = new Dictionary<string, string>();
-                for (int j = 0; j < headers.Length && j < values.Length; j++)
-                {
-                    row[headers[j]] = values[j].Trim();
-                }
-                result.Add(row);
+                row[headers[j]] = values[j];
             }
+            yield return row;
         }
-        catch { }
-        return result;
     }
 
-    private static List<Dictionary<string, string>> ReadExcelData(string filePath)
-    {
-        var result = new List<Dictionary<string, string>>();
-        try
-        {
-            using var doc = SpreadsheetDocument.Open(filePath, false);
-            var workbookPart = doc.WorkbookPart;
-            if (workbookPart == null) return result;
-
-            var sheet = workbookPart.Workbook.Sheets?.GetFirstChild<Sheet>();
-            if (sheet == null) return result;
-
-            var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id!);
-            var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-            if (sheetData == null) return result;
-
-            var rows = sheetData.Elements<Row>().ToList();
-            if (rows.Count < 2) return result;
-
-            var headers = GetRowValues(rows[0], workbookPart);
-
-            for (int i = 1; i < rows.Count; i++)
-            {
-                var values = GetRowValues(rows[i], workbookPart);
-                var row = new Dictionary<string, string>();
-                for (int j = 0; j < headers.Count && j < values.Count; j++)
-                {
-                    row[headers[j]] = values[j];
-                }
-                result.Add(row);
-            }
-        }
-        catch { }
-        return result;
-    }
-
-    private static List<string> GetRowValues(Row row, WorkbookPart workbookPart)
+    private List<string> GetRowValues(Row row, WorkbookPart workbookPart)
     {
         var values = new List<string>();
         var stringTable = workbookPart.SharedStringTablePart?.SharedStringTable;
@@ -163,7 +189,6 @@ public static class DataReaderService
         {
             string value = cell.CellValue?.Text ?? "";
 
-            // If cell references shared string table
             if (cell.DataType?.Value == CellValues.SharedString && stringTable != null)
             {
                 if (int.TryParse(value, out int idx))

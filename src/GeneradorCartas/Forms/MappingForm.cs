@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.Packaging;
 using OpenXmlWp = DocumentFormat.OpenXml.Wordprocessing;
+using GeneradorCartas.Services;
 
 namespace GeneradorCartas.Forms;
 
@@ -19,6 +20,7 @@ public class MappingForm : Form
     private readonly List<string> _csvColumns = new();
     private readonly List<string> _sampleRow = new();
     private readonly List<string> _wordVariables = new();
+    private readonly DataReaderService _dataReader;
 
     private ListView listMapping = null!;
     
@@ -43,12 +45,13 @@ public class MappingForm : Form
 
     public Dictionary<string, string> Mapping => _mapping;
 
-    public MappingForm(string templatePath, string dataPath, Dictionary<string, string> existingMapping, Dictionary<string, string>? formOverrides = null)
+    public MappingForm(string templatePath, string dataPath, Dictionary<string, string> existingMapping, Dictionary<string, string>? formOverrides, DataReaderService dataReader)
     {
         _templatePath = templatePath;
         _dataPath = dataPath;
         _mapping = new Dictionary<string, string>(existingMapping ?? new Dictionary<string, string>());
         _formOverrides = formOverrides;
+        _dataReader = dataReader;
 
         InitializeComponent();
         LoadWordVariables();
@@ -213,7 +216,7 @@ public class MappingForm : Form
 
         try
         {
-            var (headers, sample) = Services.DataReaderService.ReadHeadersAndSample(_dataPath);
+            var (headers, sample) = _dataReader.ReadHeadersAndSample(_dataPath);
             _csvColumns.AddRange(headers);
             _sampleRow.AddRange(sample);
         }

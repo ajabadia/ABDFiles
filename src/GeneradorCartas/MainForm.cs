@@ -9,10 +9,11 @@ using ABDTools.Core.Gaweb.Models;
 
 namespace GeneradorCartas;
 
-public class MainForm : Form
+public class MainForm : Form, IGenerationProgress
 {
     // Services
     private readonly ConfigService _configService;
+    private readonly GenerationEngine _engine;
 
     // State
     private GenerationConfig _config;
@@ -71,6 +72,14 @@ public class MainForm : Form
     public MainForm()
     {
         _configService = new ConfigService();
+        var dataReader = new DataReaderService();
+        _engine = new GenerationEngine(
+            _configService, 
+            new SyncfusionPdfService(), 
+            new TemplateService(), 
+            new GawebService(),
+            dataReader
+        );
         _config = _configService.CreateNew();
 
         this.Text = "Generador de Cartas v2.0";
@@ -125,192 +134,181 @@ public class MainForm : Form
         this.Controls.Add(menuStrip);
 
         // === TOP PANEL (Config) ===
-        Panel pnlTop = new Panel { Dock = DockStyle.Top, Height = 350, Padding = new Padding(15) };
+        // We use a high panel to house the GroupBoxes
+        Panel pnlTop = new Panel { Dock = DockStyle.Top, Height = 480, Padding = new Padding(15) };
+        this.Size = new Size(1000, 900);
+        this.MinimumSize = new Size(950, 800);
 
-        int y = 15;
-        int lblX = 20, txtX = 150, txtW = 500, btnX = 660;
+        int lblX = 20, txtX = 150, txtW = 500;
 
-        // -- Preset --
-        Label lblPreset = new Label { Text = "Preset GAWEB:", Location = new Point(lblX, y + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Bold) };
-        cmbPreset = new ComboBox { Location = new Point(txtX, y), Width = 220, DropDownStyle = ComboBoxStyle.DropDownList };
+        // --- PASO 1: ARCHIVOS Y PRESETS ---
+        GroupBox grpStep1 = new GroupBox { 
+            Text = " Paso 1: Selección de Archivos y Presets ", 
+            Bounds = new Rectangle(15, 10, 920, 130),
+            Font = new Font(this.Font, FontStyle.Bold)
+        };
+        grpStep1.Font = new Font(this.Font.FontFamily, 9, FontStyle.Bold); // Slighty larger for header
+        
+        int y1 = 30;
+        Label lblPreset = new Label { Text = "Preset GAWEB:", Location = new Point(lblX, y1 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        cmbPreset = new ComboBox { Location = new Point(txtX, y1), Width = 300, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font(this.Font, FontStyle.Regular) };
         cmbPreset.SelectedIndexChanged += CmbPreset_SelectedIndexChanged;
-        Button btnBrowsePreset = new Button { Text = "...", Location = new Point(txtX + 225, y), Width = 30 };
+        Button btnBrowsePreset = new Button { Text = "...", Location = new Point(txtX + 305, y1), Width = 35 };
         btnBrowsePreset.Click += BtnBrowsePreset_Click;
-        Button btnRefreshPresets = new Button { Text = "R", Location = new Point(txtX + 260, y), Width = 30 }; // R = Refresh
-        var ttRefresh = new ToolTip(); ttRefresh.SetToolTip(btnRefreshPresets, "Recargar lista");
+        Button btnRefreshPresets = new Button { Text = "R", Location = new Point(txtX + 345, y1), Width = 35 };
         btnRefreshPresets.Click += (s, e) => RefreshPresetList();
-        Button btnPresetDetail = new Button { Text = "Detalle", Location = new Point(txtX + 295, y), Width = 75 };
+        Button btnPresetDetail = new Button { Text = "Ver Detalle", Location = new Point(txtX + 385, y1), Width = 90 };
         btnPresetDetail.Click += BtnPresetDetail_Click;
-        lblPresetName = new Label { Text = "", Location = new Point(txtX + 380, y + 3), AutoSize = true, ForeColor = Color.DarkBlue, Font = new Font(this.Font, FontStyle.Italic) };
-        pnlTop.Controls.AddRange(new Control[] { lblPreset, cmbPreset, btnBrowsePreset, btnRefreshPresets, btnPresetDetail, lblPresetName });
-        y += 35;
+        lblPresetName = new Label { Text = "", Location = new Point(txtX + 485, y1 + 3), AutoSize = true, ForeColor = Color.DarkBlue, Font = new Font(this.Font, FontStyle.Italic) };
+        grpStep1.Controls.AddRange(new Control[] { lblPreset, cmbPreset, btnBrowsePreset, btnRefreshPresets, btnPresetDetail, lblPresetName });
 
-        // -- Archivo de Datos --
-        Label lblData = new Label { Text = "Archivo Datos:", Location = new Point(lblX, y + 3), AutoSize = true };
-        txtDataFile = new TextBox { Location = new Point(txtX, y), Width = 450, ReadOnly = true };
-        Button btnBrowseData = new Button { Text = "...", Location = new Point(605, y), Width = 40 };
+        y1 += 35;
+        Label lblData = new Label { Text = "Archivo Datos:", Location = new Point(lblX, y1 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtDataFile = new TextBox { Location = new Point(txtX, y1), Width = 550, ReadOnly = true, Font = new Font(this.Font, FontStyle.Regular) };
+        Button btnBrowseData = new Button { Text = "Explorar...", Location = new Point(txtX + 555, y1), Width = 85 };
         btnBrowseData.Click += BtnBrowseData_Click;
-        Button btnDataDetail = new Button { Text = "Detalle", Location = new Point(650, y), Width = 75 };
+        Button btnDataDetail = new Button { Text = "Vista Previa", Location = new Point(txtX + 645, y1), Width = 90 };
         btnDataDetail.Click += BtnDataDetail_Click;
-        lblDataStatus = new Label { Text = "", Location = new Point(735, y + 3), AutoSize = true, ForeColor = Color.Green }; // Will use OK/X instead of Check
-        pnlTop.Controls.AddRange(new Control[] { lblData, txtDataFile, btnBrowseData, btnDataDetail, lblDataStatus });
-        y += 30;
+        lblDataStatus = new Label { Text = "", Location = new Point(txtX + 740, y1 + 3), AutoSize = true, ForeColor = Color.Green };
+        grpStep1.Controls.AddRange(new Control[] { lblData, txtDataFile, btnBrowseData, btnDataDetail, lblDataStatus });
 
-        // -- Plantilla Word --
-        Label lblTemplate = new Label { Text = "Plantilla DOCX:", Location = new Point(lblX, y + 3), AutoSize = true };
-        txtTemplateFile = new TextBox { Location = new Point(txtX, y), Width = txtW, ReadOnly = true };
-        Button btnBrowseTemplate = new Button { Text = "...", Location = new Point(btnX, y), Width = 40 };
+        y1 += 35;
+        Label lblTemplate = new Label { Text = "Plantilla DOCX:", Location = new Point(lblX, y1 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtTemplateFile = new TextBox { Location = new Point(txtX, y1), Width = 550, ReadOnly = true, Font = new Font(this.Font, FontStyle.Regular) };
+        Button btnBrowseTemplate = new Button { Text = "Explorar...", Location = new Point(txtX + 555, y1), Width = 85 };
         btnBrowseTemplate.Click += BtnBrowseTemplate_Click;
-        Button btnTemplateDetail = new Button { Text = "Detalle", Location = new Point(btnX + 45, y), Width = 75 };
+        Button btnTemplateDetail = new Button { Text = "Etiquetas", Location = new Point(txtX + 645, y1), Width = 90 };
         btnTemplateDetail.Click += BtnTemplateDetail_Click;
-        lblTemplateStatus = new Label { Text = "", Location = new Point(btnX + 125, y + 3), AutoSize = true, ForeColor = Color.Green };
-        pnlTop.Controls.AddRange(new Control[] { lblTemplate, txtTemplateFile, btnBrowseTemplate, btnTemplateDetail, lblTemplateStatus });
-        y += 35;
+        lblTemplateStatus = new Label { Text = "", Location = new Point(txtX + 740, y1 + 3), AutoSize = true, ForeColor = Color.Green };
+        grpStep1.Controls.AddRange(new Control[] { lblTemplate, txtTemplateFile, btnBrowseTemplate, btnTemplateDetail, lblTemplateStatus });
+        pnlTop.Controls.Add(grpStep1);
 
-        // -- Separador --
-        Label lblSep = new Label { Text = "── Parámetros (sobrescriben preset) ──", Location = new Point(lblX, y), AutoSize = true, ForeColor = Color.Gray };
-        pnlTop.Controls.Add(lblSep);
-        y += 25;
 
-        // -- Fechas con DatePicker --
-        Label lblFechaGen = new Label { Text = "Fecha Generación:", Location = new Point(lblX, y + 3), AutoSize = true };
-        txtFechaGen = new TextBox { Location = new Point(txtX, y), Width = 100, MaxLength = 8 };
+        // --- PASO 2: PARÁMETROS DEL LOTE ---
+        GroupBox grpStep2 = new GroupBox { 
+            Text = " Paso 2: Parámetros del Lote (Sobrescriben Preset) ", 
+            Bounds = new Rectangle(15, 145, 920, 100),
+            Font = new Font(this.Font, FontStyle.Bold)
+        };
+        int y2 = 35;
+        int step2X = 15;
+        
+        Label lblFechaGen = new Label { Text = "F. Generación:", Location = new Point(step2X, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtFechaGen = new TextBox { Location = new Point(step2X + 90, y2), Width = 70, MaxLength = 8, Font = new Font(this.Font, FontStyle.Regular) };
         txtFechaGen.TextChanged += (s, e) => { _config.Overrides.FechaGeneracion = txtFechaGen.Text; MarkDirty(); UpdateDateWarnings(); };
-        Button btnCalGen = new Button { Text = "...", Location = new Point(txtX + 105, y), Width = 30 }; // Calendar
+        Button btnCalGen = new Button { Text = "📅", Location = new Point(step2X + 165, y2 - 1), Width = 30, Height = 25 };
         btnCalGen.Click += (s, e) => ShowDatePicker(txtFechaGen);
-        Button btnTodayGen = new Button { Text = "Hoy", Location = new Point(txtX + 140, y), Width = 50 };
+        Button btnTodayGen = new Button { Text = "Hoy", Location = new Point(step2X + 198, y2 - 1), Width = 40, Height = 25 };
         btnTodayGen.Click += (s, e) => { txtFechaGen.Text = DateTime.Now.ToString("yyyyMMdd"); };
-        lblFechaGenWarning = new Label { Text = "", Location = new Point(txtX + 195, y + 3), AutoSize = true, ForeColor = Color.DarkOrange };
-        var ttGenWarn = new ToolTip();
-        ttGenWarn.SetToolTip(lblFechaGenWarning, "Valor diferente al del preset");
+        lblFechaGenWarning = new Label { Text = "", Location = new Point(step2X + 240, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        Label lblFechaCarta = new Label { Text = "Fecha Carta:", Location = new Point(360, y + 3), AutoSize = true };
-        txtFechaCarta = new TextBox { Location = new Point(460, y), Width = 100, MaxLength = 8 };
+        Label lblFechaCarta = new Label { Text = "F. Carta:", Location = new Point(step2X + 270, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtFechaCarta = new TextBox { Location = new Point(step2X + 330, y2), Width = 70, MaxLength = 8, Font = new Font(this.Font, FontStyle.Regular) };
         txtFechaCarta.TextChanged += (s, e) => { _config.Overrides.FechaCarta = txtFechaCarta.Text; MarkDirty(); UpdateDateWarnings(); };
-        Button btnCalCarta = new Button { Text = "...", Location = new Point(565, y), Width = 30 }; // Calendar
+        Button btnCalCarta = new Button { Text = "📅", Location = new Point(step2X + 405, y2 - 1), Width = 30, Height = 25 };
         btnCalCarta.Click += (s, e) => ShowDatePicker(txtFechaCarta);
-        Button btnTodayCarta = new Button { Text = "Hoy", Location = new Point(600, y), Width = 50 };
+        Button btnTodayCarta = new Button { Text = "Hoy", Location = new Point(step2X + 438, y2 - 1), Width = 40, Height = 25 };
         btnTodayCarta.Click += (s, e) => { txtFechaCarta.Text = DateTime.Now.ToString("yyyyMMdd"); };
-        lblFechaCartaWarning = new Label { Text = "", Location = new Point(655, y + 3), AutoSize = true, ForeColor = Color.DarkOrange };
-        var ttCartaWarn = new ToolTip();
-        ttCartaWarn.SetToolTip(lblFechaCartaWarning, "Valor diferente al del preset");
+        lblFechaCartaWarning = new Label { Text = "", Location = new Point(step2X + 482, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        pnlTop.Controls.AddRange(new Control[] { lblFechaGen, txtFechaGen, btnCalGen, btnTodayGen, lblFechaGenWarning, lblFechaCarta, txtFechaCarta, btnCalCarta, btnTodayCarta, lblFechaCartaWarning });
-        y += 30;
-
-        // -- Lote, CodDoc, Oficina --
-        Label lblLote = new Label { Text = "Lote:", Location = new Point(lblX, y + 3), AutoSize = true };
-        txtLote = new TextBox { Location = new Point(txtX, y), Width = 60, MaxLength = 4 };
+        Label lblLote = new Label { Text = "Lote:", Location = new Point(step2X + 510, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtLote = new TextBox { Location = new Point(step2X + 545, y2), Width = 50, MaxLength = 4, Font = new Font(this.Font, FontStyle.Regular) };
         txtLote.TextChanged += (s, e) => { _config.Overrides.Lote = txtLote.Text; MarkDirty(); };
 
-        Label lblCodDoc = new Label { Text = "Cód. Doc:", Location = new Point(220, y + 3), AutoSize = true };
-        txtCodDoc = new TextBox { Location = new Point(290, y), Width = 80, MaxLength = 6 };
+        Label lblCodDoc = new Label { Text = "Cód. Doc:", Location = new Point(step2X + 610, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtCodDoc = new TextBox { Location = new Point(step2X + 680, y2), Width = 70, MaxLength = 6, Font = new Font(this.Font, FontStyle.Regular) };
         txtCodDoc.TextChanged += (s, e) => { _config.Overrides.CodigoDocumento = txtCodDoc.Text; MarkDirty(); UpdateFieldWarnings(); };
-        lblCodDocWarning = new Label { Text = "", Location = new Point(375, y + 3), AutoSize = true, ForeColor = Color.DarkOrange };
+        lblCodDocWarning = new Label { Text = "", Location = new Point(step2X + 755, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        Label lblOficina = new Label { Text = "Oficina:", Location = new Point(400, y + 3), AutoSize = true };
-        txtOficina = new TextBox { Location = new Point(460, y), Width = 70, MaxLength = 5 };
+        Label lblOficina = new Label { Text = "Oficina:", Location = new Point(step2X + 790, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtOficina = new TextBox { Location = new Point(step2X + 850, y2), Width = 50, MaxLength = 5, Font = new Font(this.Font, FontStyle.Regular) };
         txtOficina.TextChanged += (s, e) => { _config.Overrides.Oficina = txtOficina.Text; MarkDirty(); UpdateFieldWarnings(); };
-        lblOficinaWarning = new Label { Text = "", Location = new Point(535, y + 3), AutoSize = true, ForeColor = Color.DarkOrange };
+        lblOficinaWarning = new Label { Text = "", Location = new Point(step2X + 905, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        pnlTop.Controls.AddRange(new Control[] { lblLote, txtLote, lblCodDoc, txtCodDoc, lblCodDocWarning, lblOficina, txtOficina, lblOficinaWarning });
-        y += 30;
+        grpStep2.Controls.AddRange(new Control[] { 
+            lblFechaGen, txtFechaGen, btnCalGen, btnTodayGen, lblFechaGenWarning,
+            lblFechaCarta, txtFechaCarta, btnCalCarta, btnTodayCarta, lblFechaCartaWarning,
+            lblLote, txtLote, lblCodDoc, txtCodDoc, lblCodDocWarning, 
+            lblOficina, txtOficina, lblOficinaWarning 
+        });
+        pnlTop.Controls.Add(grpStep2);
 
-        // -- Rango --
-        Label lblRangeFrom = new Label { Text = "Desde registro:", Location = new Point(lblX, y + 3), AutoSize = true };
-        txtRangeFrom = new TextBox { Location = new Point(txtX, y), Width = 60 };
+
+        // --- PASO 3: SELECCIÓN DE REGISTROS Y SALIDA ---
+        GroupBox grpStep3 = new GroupBox { 
+            Text = " Paso 3: Selección de Registros y Salida ", 
+            Bounds = new Rectangle(15, 250, 920, 110),
+            Font = new Font(this.Font, FontStyle.Bold)
+        };
+        int y3 = 30;
+        Label lblRangeFrom = new Label { Text = "Desde Reg:", Location = new Point(lblX, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtRangeFrom = new TextBox { Location = new Point(txtX, y3), Width = 60, Font = new Font(this.Font, FontStyle.Regular) };
         txtRangeFrom.TextChanged += (s, e) => { _config.RangeFrom = int.TryParse(txtRangeFrom.Text, out int v) ? v : null; MarkDirty(); };
 
-        Label lblRangeTo = new Label { Text = "Hasta:", Location = new Point(230, y + 3), AutoSize = true };
-        txtRangeTo = new TextBox { Location = new Point(280, y), Width = 60 };
+        Label lblRangeTo = new Label { Text = "Hasta:", Location = new Point(230, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtRangeTo = new TextBox { Location = new Point(280, y3), Width = 60, Font = new Font(this.Font, FontStyle.Regular) };
         txtRangeTo.TextChanged += (s, e) => { _config.RangeTo = int.TryParse(txtRangeTo.Text, out int v) ? v : null; MarkDirty(); };
 
-        // -- Tipo Salida (same line as Range) --
-        Label lblOutputType = new Label { Text = "Tipo Salida:", Location = new Point(380, y + 3), AutoSize = true };
-        cmbOutputType = new ComboBox { Location = new Point(460, y), Width = 130, DropDownStyle = ComboBoxStyle.DropDownList };
+        Label lblOutputType = new Label { Text = "Tipo Salida:", Location = new Point(380, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        cmbOutputType = new ComboBox { Location = new Point(480, y3), Width = 150, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font(this.Font, FontStyle.Regular) };
         cmbOutputType.Items.AddRange(new object[] { "DOCX", "PDF", "PDF + GAWEB" });
-        cmbOutputType.SelectedIndex = 2; // Default to PDF+GAWEB
         cmbOutputType.SelectedIndexChanged += (s, e) => { 
             _config.OutputType = cmbOutputType.SelectedIndex switch { 0 => "DOCX", 1 => "PDF", _ => "PDF_GAWEB" }; 
             MarkDirty(); 
         };
 
-        pnlTop.Controls.AddRange(new Control[] { lblRangeFrom, txtRangeFrom, lblRangeTo, txtRangeTo, lblOutputType, cmbOutputType });
-        y += 40;
-
-        // -- Output Directory Display --
-        // -- Output Directory Display --
-        Label lblOutDir = new Label { Text = "Dir. Salida:", Location = new Point(lblX, y + 3), AutoSize = true };
-        txtOutputDir = new TextBox { 
-            Location = new Point(txtX, y), 
-            Width = 450, 
-            ReadOnly = true, 
-             BackColor = Color.WhiteSmoke
-        };
-        
-        Button btnBrowseOutput = new Button { Text = "...", Location = new Point(605, y), Width = 40 };
+        y3 += 35;
+        Label lblOutDir = new Label { Text = "Dir. Salida:", Location = new Point(lblX, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtOutputDir = new TextBox { Location = new Point(txtX, y3), Width = 550, ReadOnly = true, BackColor = Color.WhiteSmoke, Font = new Font(this.Font, FontStyle.Regular) };
+        Button btnBrowseOutput = new Button { Text = "Cambiar...", Location = new Point(txtX + 555, y3), Width = 85 };
         btnBrowseOutput.Click += BtnBrowseOutput_Click;
-        
-        Button btnOpenOutput = new Button { Text = "Abrir", Location = new Point(650, y), Width = 75 };
+        Button btnOpenOutput = new Button { Text = "Abrir Carpeta", Location = new Point(txtX + 645, y3), Width = 95 };
         btnOpenOutput.Click += (s, e) => {
              if (!string.IsNullOrEmpty(_config.OutputDirectory) && Directory.Exists(_config.OutputDirectory))
                  System.Diagnostics.Process.Start("explorer.exe", _config.OutputDirectory);
         };
-        var ttOut = new ToolTip();
-        ttOut.SetToolTip(btnOpenOutput, "Abrir carpeta de salida");
+        grpStep3.Controls.AddRange(new Control[] { lblRangeFrom, txtRangeFrom, lblRangeTo, txtRangeTo, lblOutputType, cmbOutputType, lblOutDir, txtOutputDir, btnBrowseOutput, btnOpenOutput });
+        pnlTop.Controls.Add(grpStep3);
 
-        pnlTop.Controls.AddRange(new Control[] { lblOutDir, txtOutputDir, btnBrowseOutput, btnOpenOutput });
-        y += 30;
 
-        // -- Botones de acción --
-        btnGenerate = new Button
-        {
-            Text = "GENERAR",
-            Location = new Point(txtX, y),
-            Width = 150,
-            Height = 40,
-            BackColor = Color.LightSkyBlue,
-            Font = new Font(this.Font, FontStyle.Bold)
-        };
-        btnGenerate.Click += BtnGenerate_Click;
-
-        btnCancel = new Button
-        {
-            Text = "CANCELAR",
-            Location = new Point(txtX + 290, y),
-            Width = 100,
-            Height = 40,
-            BackColor = Color.LightCoral,
-            Enabled = false
-        };
-        btnCancel.Click += BtnCancel_Click;
-
-        // Mapeo button (yellow, before Generate)
-        _btnMapping = new Button
-        {
-            Text = "📋 MAPEO...",
-            Location = new Point(txtX, y),
-            Width = 120,
-            Height = 40,
+        // --- PASO 4: ACCIONES PRINCIPALES ---
+        _btnMapping = new Button {
+            Text = "📋 CONFIGURAR MAPEO",
+            Location = new Point(15, 380),
+            Width = 240,
+            Height = 60,
             BackColor = Color.Gold,
-            Font = new Font(this.Font, FontStyle.Bold)
+            Font = new Font(this.Font.FontFamily, 11, FontStyle.Bold),
+            Cursor = Cursors.Hand
         };
         _btnMapping.Click += BtnMapping_Click;
 
-        // Generate button (initially disabled until mapping done)
-        btnGenerate = new Button
-        {
-            Text = "GENERAR",
-            Location = new Point(txtX + 130, y),
-            Width = 150,
-            Height = 40,
+        btnGenerate = new Button {
+            Text = "🚀 INICIAR GENERACIÓN",
+            Location = new Point(270, 380),
+            Width = 400,
+            Height = 60,
             BackColor = Color.LightSkyBlue,
-            Font = new Font(this.Font, FontStyle.Bold),
-            Enabled = false
+            Font = new Font(this.Font.FontFamily, 12, FontStyle.Bold),
+            Enabled = false,
+            Cursor = Cursors.Hand
         };
         btnGenerate.Click += BtnGenerate_Click;
 
+        btnCancel = new Button {
+            Text = "DETENER",
+            Location = new Point(685, 380),
+            Width = 150,
+            Height = 60,
+            BackColor = Color.LightCoral,
+            Font = new Font(this.Font.FontFamily, 10, FontStyle.Bold),
+            Enabled = false,
+            Cursor = Cursors.Hand
+        };
+        btnCancel.Click += BtnCancel_Click;
+
         pnlTop.Controls.AddRange(new Control[] { _btnMapping, btnGenerate, btnCancel });
+
         this.Controls.Add(pnlTop);
 
         // === STATUS STRIP ===
@@ -321,13 +319,12 @@ public class MainForm : Form
 
         // === LOG AREA ===
         Panel pnlFill = new Panel { Dock = DockStyle.Fill, Padding = new Padding(15) };
-        progressBar = new ProgressBar { Dock = DockStyle.Top, Height = 20 };
-        txtLog = new RichTextBox
-        {
+        progressBar = new ProgressBar { Dock = DockStyle.Top, Height = 25 };
+        txtLog = new RichTextBox {
             Dock = DockStyle.Fill,
             ReadOnly = true,
             BackColor = Color.White,
-            Font = new Font("Consolas", 9),
+            Font = new Font("Consolas", 10),
             BorderStyle = BorderStyle.Fixed3D
         };
 
@@ -341,6 +338,7 @@ public class MainForm : Form
         pnlTop.SendToBack();
         statusStrip.SendToBack();
         menuStrip.SendToBack();
+
         // Set default Lote to current HHmm if empty
         if (string.IsNullOrEmpty(txtLote.Text))
             txtLote.Text = DateTime.Now.ToString("HHmm");
@@ -458,12 +456,13 @@ public class MainForm : Form
 
     private void MnuProperties_Click(object? sender, EventArgs e)
     {
-        using var prop = new PropertiesForm(_config.OutputDirectory, true);
+        using var prop = new PropertiesForm(_config.OutputDirectory, true, _config.SyncfusionLicenseKey ?? "");
         if (prop.ShowDialog() == DialogResult.OK)
         {
             _config.OutputDirectory = prop.OutputPath;
+            _config.SyncfusionLicenseKey = prop.SyncfusionKey;
             MarkDirty();
-            Log($"Directorio de salida: {_config.OutputDirectory}");
+            Log($"Configuración actualizada.");
         }
     }
 
@@ -507,7 +506,8 @@ public class MainForm : Form
             return;
         }
 
-        using var previewForm = new Forms.DataPreviewForm(_config.DataFilePath);
+        var dataReader = new DataReaderService();
+        using var previewForm = new Forms.DataPreviewForm(_config.DataFilePath, dataReader);
         previewForm.ShowDialog(this);
     }
 
@@ -814,7 +814,8 @@ public class MainForm : Form
         if (!string.IsNullOrWhiteSpace(txtLote.Text))
             formOverrides["Lote"] = txtLote.Text;
 
-        using var mappingForm = new Forms.MappingForm(_config.TemplatePath, _config.DataFilePath, _config.VariableMapping, formOverrides);
+        var dataReader = new DataReaderService();
+        using var mappingForm = new Forms.MappingForm(_config.TemplatePath, _config.DataFilePath, _config.VariableMapping, formOverrides, dataReader);
         if (mappingForm.ShowDialog(this) == DialogResult.OK)
         {
             _config.VariableMapping = mappingForm.Mapping;
@@ -886,11 +887,31 @@ public class MainForm : Form
 
         try
         {
-            await Task.Run(() => RunGeneration(_cts.Token), _cts.Token);
+            // Register Syncfusion License if present
+            if (!string.IsNullOrWhiteSpace(_config.SyncfusionLicenseKey))
+            {
+                ConfigService.RegisterLicense(_config.SyncfusionLicenseKey);
+            }
+
+            // Choose PDF service based on config
+            IPdfService pdfService = _config.PdfLibrary == "Word" 
+                ? new PdfService() 
+                : new SyncfusionPdfService();
+
+            // Re-instantiate engine with current services (Poor man's DI/Service Locator)
+            var engine = new GenerationEngine(_configService, pdfService, new TemplateService(), new GawebService(), new DataReaderService());
+
+            await Task.Run(() => engine.Run(_config, this, _cts.Token), _cts.Token);
+            MessageBox.Show("Generación completada.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (OperationCanceledException)
         {
             Log("Generación cancelada por el usuario.");
+        }
+        catch (Exception ex)
+        {
+            Log($"ERROR CRÍTICO: {ex.Message}");
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
         {
@@ -902,209 +923,31 @@ public class MainForm : Form
         }
     }
 
+    // === IGenerationProgress Implementation ===
+
+    public void ReportProgress(int current, int total, string message)
+    {
+        if (this.InvokeRequired)
+        {
+            this.Invoke(new Action(() => ReportProgress(current, total, message)));
+            return;
+        }
+        progressBar.Style = ProgressBarStyle.Blocks;
+        progressBar.Value = (int)((float)current / total * 100);
+        lblStatus.Text = message;
+    }
+
+    public void ReportLog(string message)
+    {
+        InvokeLog(message);
+    }
+
     private void BtnCancel_Click(object? sender, EventArgs e)
     {
         _cts?.Cancel();
     }
 
-    // === GENERATION LOGIC ===
-
-    private void RunGeneration(CancellationToken ct)
-    {
-        try
-        {
-            var pdfService = new PdfService();
-            var templateService = new TemplateService();
-            var gawebService = new GawebService();
-
-            // Load preset with overrides
-            GawebPreset preset;
-            try
-            {
-                preset = _configService.LoadPresetWithOverrides(_config);
-            }
-            catch (Exception ex)
-            {
-                InvokeLog($"ERROR: No se pudo cargar el preset: {ex.Message}");
-                return;
-            }
-
-            // Read data file
-            string[] lines = File.ReadAllLines(_config.DataFilePath);
-            if (lines.Length < 2)
-            {
-                InvokeLog("ERROR: Archivo de datos vacío o sin cabeceras.");
-                return;
-            }
-
-            string[] headers = lines[0].Split(';');
-            string batchTimestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string lote = _config.Overrides.Lote ?? "0001";
-            string codigoEntorno = preset.CodigoEntorno ?? "ENTORNO";
-            string baseMd5 = gawebService.GenerateMd5(batchTimestamp);
-
-            // Create lote folder (Just the Lote number/name)
-            string loteFolder = Path.Combine(_config.OutputDirectory, lote);
-            Directory.CreateDirectory(loteFolder);
-            string tempDir = Path.Combine(loteFolder, $"TEMP_PDF_{batchTimestamp}");
-            Directory.CreateDirectory(tempDir);
-
-            var gawebRecords = new List<ABDTools.Core.Gaweb.Models.GawebRecord>();
-
-            int fromRecord = _config.RangeFrom ?? 1;
-            int toRecord = _config.RangeTo ?? (lines.Length - 1);
-            toRecord = Math.Min(toRecord, lines.Length - 1);
-
-            int total = toRecord - fromRecord + 1;
-            int processed = 0;
-
-            InvokeLog($"Procesando {total} registros (del {fromRecord} al {toRecord})...");
-
-            for (int i = fromRecord; i <= toRecord; i++)
-            {
-                ct.ThrowIfCancellationRequested();
-
-                string line = lines[i];
-                if (string.IsNullOrWhiteSpace(line)) continue;
-
-                string[] values = line.Split(';');
-                var rowData = new Dictionary<string, string>();
-                for (int h = 0; h < headers.Length && h < values.Length; h++)
-                    rowData[headers[h]] = values[h];
-
-                // Apply variable mapping
-                var mappedData = new Dictionary<string, string>();
-                foreach (var kv in _config.VariableMapping)
-                {
-                    if (rowData.TryGetValue(kv.Value, out var val))
-                        mappedData[kv.Key] = val;
-                }
-                // If no mapping, use direct column names
-                if (mappedData.Count == 0)
-                    mappedData = rowData;
-
-                string docName = gawebService.CalculateGawebPdfName(baseMd5, i);
-                string finalPdfName = docName + ".pdf";
-
-                // Build GAWEB record
-                var rec = new ABDTools.Core.Gaweb.Models.GawebRecord
-                {
-                    TipoCarta = " ",
-                    Formato = preset.FormatoCarta ?? "04",
-                    FechaGeneracion = preset.FechaGeneracion ?? DateTime.Now.ToString("yyyyMMdd"),
-                    Lote = lote.PadLeft(4, '0').Substring(0, Math.Min(lote.Length, 4)),
-                    Secuencial = i.ToString().PadLeft(7, '0'),
-                    Pagina = preset.PaginasDefecto.ToString().PadLeft(4, '0'),
-                    CodDocumento = preset.CodigoDocumento ?? "X00054",
-                    FechaCarta = preset.FechaCarta ?? DateTime.Now.ToString("yyyyMMdd"),
-                    IndDestino = preset.IndicadorDestino ?? "0",
-                    Idioma = preset.Idioma ?? "  ",
-                    Oficina = preset.Oficina ?? "00000",
-                    NombrePDF = docName
-                };
-                gawebRecords.Add(rec);
-
-                string tempDocx = Path.Combine(tempDir, docName + ".docx");
-                string tempPdf = Path.Combine(tempDir, finalPdfName);
-
-                try
-                {
-                    templateService.ProcessTemplate(_config.TemplatePath, tempDocx, mappedData);
-                    
-                    // Handle output based on OutputType
-                    if (_config.OutputType == "DOCX")
-                    {
-                        // Keep only DOCX - move to output folder
-                        string finalDocx = Path.Combine(loteFolder, docName + ".docx");
-                        File.Move(tempDocx, finalDocx, true);
-                    }
-                    else
-                    {
-                        // PDF or PDF_GAWEB - convert to PDF
-                        try 
-                        {
-                            pdfService.ConvertDocxToPdf(tempDocx, tempPdf);
-                            if (File.Exists(tempDocx)) File.Delete(tempDocx);
-                        }
-                        catch (Exception pdfEx)
-                        {
-                            // If PDF conversion fails, we MUST log it clearly.
-                            // And we probably shouldn't delete the DOCX so the user has something.
-                            // But for "PDF_GAWEB" if we keep DOCX, the zip will contain DOCX which confuses the user.
-                            // Let's log heavily.
-                            InvokeLog($"ERROR AL GENERAR PDF ({docName}): {pdfEx.Message}");
-                            // Don't rethrow to avoid stopping the whole batch, but this record failed its primary output.
-                        }
-                    }
-
-                    processed++;
-                    Invoke(() =>
-                    {
-                        progressBar.Style = ProgressBarStyle.Blocks;
-                        progressBar.Value = (int)((float)processed / total * 100);
-                    });
-
-                    if (processed % 10 == 0)
-                        InvokeLog($"[{processed}/{total}] procesados...");
-                }
-                catch (Exception ex)
-                {
-                    InvokeLog($"ERROR registro {i}: {ex.Message}");
-                }
-            }
-
-            ct.ThrowIfCancellationRequested();
-
-            // Generate GAWEB package only for PDF_GAWEB mode
-            if (_config.OutputType == "PDF_GAWEB")
-            {
-                InvokeLog("Generando paquete GAWEB...");
-                string basePackageName = $"COMUNICADOS.PDF.{codigoEntorno}.{batchTimestamp}.{lote}";
-
-                string gawebFile = Path.Combine(loteFolder, basePackageName + ".GAWEB");
-                using (var sw = new StreamWriter(gawebFile, false, System.Text.Encoding.UTF8))
-                {
-                    foreach (var rec in gawebRecords)
-                        sw.WriteLine(rec.Serialize());
-                }
-
-                string zipFile = Path.Combine(loteFolder, basePackageName + ".ZIP");
-                gawebService.ZipDirectory(tempDir, zipFile);
-                gawebService.CreateMetaFiles(zipFile, basePackageName, loteFolder);
-
-                Directory.Delete(tempDir, true);
-                InvokeLog($"✓ Paquete GAWEB completado: {loteFolder}");
-            }
-            else if (_config.OutputType == "PDF")
-            {
-                // Move PDFs from temp to output folder
-                foreach (var pdf in Directory.GetFiles(tempDir, "*.pdf"))
-                {
-                    File.Move(pdf, Path.Combine(loteFolder, Path.GetFileName(pdf)), true);
-                }
-                Directory.Delete(tempDir, true);
-                InvokeLog($"✓ PDFs generados en: {loteFolder}");
-            }
-            else
-            {
-                // DOCX mode - temp folder already empty, just clean up
-                if (Directory.Exists(tempDir))
-                    Directory.Delete(tempDir, true);
-                InvokeLog($"✓ Documentos DOCX generados en: {loteFolder}");
-            }
-
-            Invoke(() => MessageBox.Show("Generación completada.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information));
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            InvokeLog($"ERROR CRÍTICO: {ex.Message}");
-            Invoke(() => MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error));
-        }
-    }
+    // === GENERATION LOGIC MOVED TO GenerationEngine ===
 
     // === HELPERS ===
 

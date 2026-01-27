@@ -15,6 +15,18 @@ public class ConfigService
     }
 
     /// <summary>
+    /// Registers the Syncfusion license key. 
+    /// Should be called on application startup.
+    /// </summary>
+    public static void RegisterLicense(string key)
+    {
+        if (!string.IsNullOrWhiteSpace(key))
+        {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(key);
+        }
+    }
+
+    /// <summary>
     /// Loads a GenerationConfig from a JSON file, validating its type
     /// </summary>
     public GenerationConfig LoadConfig(string path)
