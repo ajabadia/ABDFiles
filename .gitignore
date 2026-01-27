@@ -30,8 +30,10 @@
 /wix-error.txt
 *.bak
 *.tmp
+*.log
 
-# App Folders to ignore if they are just temporary
+# Scripts and Bundle Folders
+/bundle_code/
 /go - old/
 
 # OS generated files
