@@ -1,0 +1,285 @@
+{
+    "nombre": "GAWEB Oficial (PDF)",
+    "extension": ".GAWEB",
+    "campos": [
+        {
+            "nombre": "Tipo de Carta",
+            "longitud": 1,
+            "origen": "FIJO",
+            "valor": " ",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Formato Carta",
+            "longitud": 2,
+            "origen": "VARIABLE",
+            "valor": "FORMATO_CARTA",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA",
+            "valores_permitidos": [
+                "01",
+                "02",
+                "03",
+                "04",
+                "05"
+            ]
+        },
+        {
+            "nombre": "Fecha Generacion",
+            "longitud": 8,
+            "origen": "FECHA",
+            "valor": "20060102",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Lote",
+            "longitud": 4,
+            "origen": "VARIABLE",
+            "valor": "LOTE",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA",
+            "truncar": true
+        },
+        {
+            "nombre": "Secuencial",
+            "longitud": 7,
+            "origen": "SECUENCIA",
+            "valor": "",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Num Pagina",
+            "longitud": 4,
+            "origen": "FIJO",
+            "valor": "0001",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Cod Documento",
+            "longitud": 6,
+            "origen": "VARIABLE",
+            "valor": "COD_DOC",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Version Cod Doc",
+            "longitud": 4,
+            "origen": "FIJO",
+            "valor": "0000",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Clase Contrato",
+            "longitud": 2,
+            "origen": "VARIABLE",
+            "valor": "CLASE_CONTRATO",
+            "caracter_relleno": " ",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Codigo Contrato",
+            "longitud": 25,
+            "origen": "VARIABLE",
+            "valor": "COD_CONTRATO",
+            "caracter_relleno": " ",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "TIREL",
+            "longitud": 1,
+            "origen": "VARIABLE",
+            "valor": "TIREL",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "NUREL",
+            "longitud": 3,
+            "origen": "VARIABLE",
+            "valor": "NUREL",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "CLALF",
+            "longitud": 15,
+            "origen": "VARIABLE",
+            "valor": "CLALF",
+            "caracter_relleno": " ",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "INDOM",
+            "longitud": 2,
+            "origen": "VARIABLE",
+            "valor": "INDOM",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Forzar Metodo Envio",
+            "longitud": 1,
+            "origen": "VARIABLE",
+            "valor": "METODO_ENVIO",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA",
+            "valores_permitidos": [
+                " ",
+                "1",
+                "3",
+                "4",
+                "5",
+                "8",
+                "0"
+            ]
+        },
+        {
+            "nombre": "Idioma",
+            "longitud": 2,
+            "origen": "FIJO",
+            "valor": " ",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Op Ahorro Cod Contrato",
+            "longitud": 2,
+            "origen": "Variable",
+            "valor": "AH_COD_CONTRATO",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Op Ahorro CCC",
+            "longitud": 25,
+            "origen": "Variable",
+            "valor": "AH_CCC",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Op Ahorro Signo",
+            "longitud": 1,
+            "origen": "Variable",
+            "valor": "AH_SIGNO",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Op Ahorro Importe",
+            "longitud": 13,
+            "origen": "Variable",
+            "valor": "AH_IMPORTE",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Op Ahorro Moneda",
+            "longitud": 2,
+            "origen": "Variable",
+            "valor": "AH_MONEDA",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Op Ahorro ISO",
+            "longitud": 3,
+            "origen": "Variable",
+            "valor": "AH_ISO",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Op Ahorro Concepto",
+            "longitud": 2,
+            "origen": "Variable",
+            "valor": "AH_CONCEPTO",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Fecha Carta Busqueda",
+            "longitud": 8,
+            "origen": "FECHA",
+            "valor": "20060102",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Indicador Destino",
+            "longitud": 1,
+            "origen": "VARIABLE",
+            "valor": "DESTINO_IND",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA",
+            "valores_permitidos": [
+                "7",
+                "0",
+                "O"
+            ]
+        },
+        {
+            "nombre": "Detalle Carga",
+            "longitud": 4,
+            "origen": "FIJO",
+            "valor": "0",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Via Reparto",
+            "longitud": 2,
+            "origen": "FIJO",
+            "valor": " ",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Ind Copia Papel",
+            "longitud": 1,
+            "origen": "FIJO",
+            "valor": " ",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Cod Oficina",
+            "longitud": 5,
+            "origen": "VARIABLE",
+            "valor": "COD_OFICINA",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Mail o Fax",
+            "longitud": 50,
+            "origen": "VARIABLE",
+            "valor": "MAIL_FAX",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA"
+        },
+        {
+            "nombre": "Longitud Comunicado",
+            "longitud": 5,
+            "origen": "FIJO",
+            "valor": "0",
+            "caracter_relleno": "0",
+            "alineacion": "DERECHA"
+        },
+        {
+            "nombre": "Nombre PDF",
+            "longitud": 40,
+            "origen": "VARIABLE",
+            "valor": "NOMBRE_PDF_FINAL",
+            "caracter_relleno": " ",
+            "alineacion": "IZQUIERDA",
+            "truncar": true
+        }
+    ]
+}

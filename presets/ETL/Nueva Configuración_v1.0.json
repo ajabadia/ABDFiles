@@ -1,0 +1,20 @@
+{
+  "nombre_mostrar": "Nueva Configuración",
+  "version": "1.0",
+  "activo": true,
+  "max_filas_por_csv": 900000,
+  "codificacion": "utf-8",
+  "tipos_registro": {
+    "000": [
+      {
+        "nombre": "CAMPO_NUEVO",
+        "inicio": 2,
+        "longitud": 10
+      }
+    ]
+  },
+  "inicio_tipo_registro": 0,
+  "longitud_tipo_registro": 0,
+  "tipo_registro_por_defecto": "",
+  "id_tipo_cabecera": ""
+}

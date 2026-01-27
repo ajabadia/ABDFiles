@@ -1,0 +1,23 @@
+{
+  "id": "1765647431756276500.json",
+  "name": "Prueba Carta A4",
+  "description": "Prueba Carta A4",
+  "active": true,
+  "tipo_soporte": "PDF",
+  "formato_carta": "04",
+  "forzar_metodo": " ",
+  "indicador_destino": "0",
+  "tipo_destino": "CL",
+  "idioma": "",
+  "via_reparto": "",
+  "copia_papel": "",
+  "fecha_generacion": "20251213",
+  "fecha_carta": "20251213",
+  "codigo_entorno": "fatca011",
+  "codigo_documento": "xxxxxx",
+  "oficina": "12345",
+  "paginas_defecto": 4,
+  "mapping": {
+    "Lote": "NOMBRE_COMPLETO"
+  }
+}

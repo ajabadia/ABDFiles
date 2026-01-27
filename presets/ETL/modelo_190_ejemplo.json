@@ -1,0 +1,78 @@
+{
+  "nombre_mostrar": "Modelo 190 (IRPF)",
+  "version": "1.0",
+  "activo": true,
+  "max_filas_por_csv": 100000,
+  "codificacion": "utf-8",
+  "tipos_registro": {
+    "1": [
+      {
+        "nombre": "TIPO_REGISTRO",
+        "inicio": 0,
+        "longitud": 1
+      },
+      {
+        "nombre": "MODELO",
+        "inicio": 1,
+        "longitud": 3
+      },
+      {
+        "nombre": "EJERCICIO",
+        "inicio": 4,
+        "longitud": 4
+      },
+      {
+        "nombre": "NIF_DECLARANTE",
+        "inicio": 8,
+        "longitud": 9
+      },
+      {
+        "nombre": "NOMBRE_DECLARANTE",
+        "inicio": 17,
+        "longitud": 40
+      },
+      {
+        "nombre": "TELEFONO_CONTACTO",
+        "inicio": 57,
+        "longitud": 9
+      }
+    ],
+    "2": [
+      {
+        "nombre": "TIPO_REGISTRO",
+        "inicio": 0,
+        "longitud": 1
+      },
+      {
+        "nombre": "MODELO",
+        "inicio": 1,
+        "longitud": 3
+      },
+      {
+        "nombre": "EJERCICIO",
+        "inicio": 4,
+        "longitud": 4
+      },
+      {
+        "nombre": "NIF_PERCEPTOR",
+        "inicio": 8,
+        "longitud": 9
+      },
+      {
+        "nombre": "NOMBRE_PERCEPTOR",
+        "inicio": 17,
+        "longitud": 40
+      },
+      {
+        "nombre": "CLAVE_PERCEPCION",
+        "inicio": 57,
+        "longitud": 1
+      },
+      {
+        "nombre": "PERCEPCIONES_DINERARIAS",
+        "inicio": 58,
+        "longitud": 13
+      }
+    ]
+  }
+}

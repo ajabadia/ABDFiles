@@ -1,0 +1,8 @@
+{
+  "nombre_mostrar": "Nueva de prueba",
+  "version": "1.0",
+  "activo": true,
+  "max_filas_por_csv": 900000,
+  "codificacion": "utf-8",
+  "tipos_registro": {}
+}

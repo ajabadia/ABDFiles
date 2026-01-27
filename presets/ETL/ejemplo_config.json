@@ -1,0 +1,24 @@
+{
+  "archivo_entrada": "FICHERO_HOST_FATCA.txt",
+  "max_filas_por_csv": 900000,
+  "codificacion": "utf-8",
+  "tipos_registro": {
+    "0": [
+      {"nombre": "TIPO", "inicio": 0, "longitud": 1},
+      {"nombre": "DNI_CLIENTE", "inicio": 1, "longitud": 9},
+      {"nombre": "NOMBRE_COMPLETO", "inicio": 10, "longitud": 40},
+      {"nombre": "FECHA_ALTA", "inicio": 50, "longitud": 8}
+    ],
+    "1": [
+      {"nombre": "TIPO", "inicio": 0, "longitud": 1},
+      {"nombre": "CIF_EMPRESA", "inicio": 1, "longitud": 9},
+      {"nombre": "RAZON_SOCIAL", "inicio": 10, "longitud": 60},
+      {"nombre": "TIN_USA", "inicio": 70, "longitud": 15}
+    ],
+    "2": [
+      {"nombre": "TIPO", "inicio": 0, "longitud": 1},
+      {"nombre": "ID_RELACION", "inicio": 1, "longitud": 10},
+      {"nombre": "CODIGO_FATCA", "inicio": 11, "longitud": 5}
+    ]
+  }
+}

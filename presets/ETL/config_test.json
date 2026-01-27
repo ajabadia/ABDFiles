@@ -1,0 +1,18 @@
+{
+  "max_filas_por_csv": 3,
+  "codificacion": "utf-8",
+  "tipos_registro": {
+    "0": [
+      {"nombre": "TIPO_REG", "inicio": 0, "longitud": 1},
+      {"nombre": "DNI_NIF", "inicio": 1, "longitud": 9},
+      {"nombre": "NOMBRE_CLIENTE", "inicio": 10, "longitud": 20},
+      {"nombre": "FECHA_NAC", "inicio": 30, "longitud": 8}
+    ],
+    "1": [
+      {"nombre": "TIPO_REG", "inicio": 0, "longitud": 1},
+      {"nombre": "CIF_EMPRESA", "inicio": 1, "longitud": 9},
+      {"nombre": "RAZON_SOCIAL", "inicio": 10, "longitud": 25},
+      {"nombre": "TIN_EEUU", "inicio": 35, "longitud": 11}
+    ]
+  }
+}

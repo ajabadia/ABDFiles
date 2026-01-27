@@ -1,0 +1,50 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="CryptoTool" Manufacturer="ABDTools" Version="1.0.0.0" UpgradeCode="12345678-1234-1234-1234-111111111111">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of CryptoTool is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="CryptoTool" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="ABDTools" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="MainExecutable">
+        <File Source="..\..\dist\CryptoTool\CryptoTool.exe" KeyPath="yes" />
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Directory="ApplicationProgramsFolder"
+                  Name="CryptoTool"
+                  Description="File Encryption Tool"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon.ico"
+                  Advertise="yes" />
+      </Component>
+      <Component Id="MainDll">
+        <File Source="..\..\dist\CryptoTool\CryptoTool.dll" />
+      </Component>
+      <Component Id="CoreDll">
+        <File Source="..\..\dist\CryptoTool\ABDTools.Core.dll" />
+      </Component>
+      <Component Id="DepsJson">
+        <File Source="..\..\dist\CryptoTool\CryptoTool.deps.json" />
+      </Component>
+      <Component Id="RuntimeConfig">
+        <File Source="..\..\dist\CryptoTool\CryptoTool.runtimeconfig.json" />
+      </Component>
+      <Component Id="AppIcon">
+          <File Source="..\..\dist\CryptoTool\AppIcon.ico" />
+      </Component>
+    </ComponentGroup>
+
+    <Icon Id="AppIcon.ico" SourceFile="AppIcon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+
+    <Feature Id="Main" Title="CryptoTool" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+  </Package>
+</Wix>

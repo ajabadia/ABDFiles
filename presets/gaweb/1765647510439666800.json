@@ -1,0 +1,15 @@
+{
+  "id": "1765647510439666800.json",
+  "name": "Prueba Carta A4 (Copia)",
+  "description": "Prueba Carta A4",
+  "tipo_soporte": "PDF",
+  "formato_carta": "04",
+  "forzar_metodo": " ",
+  "indicador_destino": "0",
+  "tipo_destino": "CL",
+  "fecha_generacion": "20251212",
+  "fecha_carta": "20251213",
+  "codigo_documento": "xxxxxxxxxxxxxxxx",
+  "oficina": "1234",
+  "paginas_defecto": 0
+}

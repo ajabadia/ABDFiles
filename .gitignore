@@ -1,0 +1,40 @@
+# .NET Specific
+[Bb]in/
+[Oo]bj/
+[Dd]ist*/
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.patch
+*.diff
+
+# Visual Studio Code
+.vscode/
+
+# Project Clutter / Logs (Root)
+/CONTROL_FILESCODE*.txt
+/TOTALCODE*.txt
+/build*.log
+/build*.txt
+/msbuild.log
+/gaweb_build.log
+/gaweb_error.txt
+/gw.log
+/gw_err.txt
+/error-log.txt
+/pub_err*.log
+/pub_err*.txt
+/publish_log.txt
+/wix-error.txt
+*.bak
+*.tmp
+
+# App Folders to ignore if they are just temporary
+/go - old/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
