@@ -153,13 +153,19 @@ public class MainForm : Form, IGenerationProgress
         Label lblPreset = new Label { Text = "Preset GAWEB:", Location = new Point(lblX, y1 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
         cmbPreset = new ComboBox { Location = new Point(txtX, y1), Width = 300, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font(this.Font, FontStyle.Regular) };
         cmbPreset.SelectedIndexChanged += CmbPreset_SelectedIndexChanged;
-        Button btnBrowsePreset = new Button { Text = "...", Location = new Point(txtX + 305, y1), Width = 35 };
+        
+        // Vertical alignment fix: Button at y1-2 to center with ComboBox
+        Button btnBrowsePreset = new Button { Text = "📂", Location = new Point(txtX + 305, y1 - 2), Width = 40, Height = 28, Font = new Font("Segoe UI Emoji", 10) };
         btnBrowsePreset.Click += BtnBrowsePreset_Click;
-        Button btnRefreshPresets = new Button { Text = "R", Location = new Point(txtX + 345, y1), Width = 35 };
+        _warningToolTip.SetToolTip(btnBrowsePreset, "Explorar archivo de preset...");
+
+        Button btnRefreshPresets = new Button { Text = "↻", Location = new Point(txtX + 350, y1 - 2), Width = 40, Height = 28, Font = new Font("Segoe UI Symbol", 12) };
         btnRefreshPresets.Click += (s, e) => RefreshPresetList();
-        Button btnPresetDetail = new Button { Text = "Ver Detalle", Location = new Point(txtX + 385, y1), Width = 90 };
+        _warningToolTip.SetToolTip(btnRefreshPresets, "Recargar lista de presets");
+
+        Button btnPresetDetail = new Button { Text = "Ver Detalle", Location = new Point(txtX + 395, y1 - 2), Width = 90, Height = 28 };
         btnPresetDetail.Click += BtnPresetDetail_Click;
-        lblPresetName = new Label { Text = "", Location = new Point(txtX + 485, y1 + 3), AutoSize = true, ForeColor = Color.DarkBlue, Font = new Font(this.Font, FontStyle.Italic) };
+        lblPresetName = new Label { Text = "", Location = new Point(txtX + 495, y1 + 5), AutoSize = true, ForeColor = Color.DarkBlue, Font = new Font(this.Font, FontStyle.Italic) };
         grpStep1.Controls.AddRange(new Control[] { lblPreset, cmbPreset, btnBrowsePreset, btnRefreshPresets, btnPresetDetail, lblPresetName });
 
         y1 += 35;
@@ -187,43 +193,46 @@ public class MainForm : Form, IGenerationProgress
         // --- PASO 2: PARÁMETROS DEL LOTE ---
         GroupBox grpStep2 = new GroupBox { 
             Text = " Paso 2: Parámetros del Lote (Sobrescriben Preset) ", 
-            Bounds = new Rectangle(15, 145, 920, 100),
+            Bounds = new Rectangle(15, 145, 920, 110),
             Font = new Font(this.Font, FontStyle.Bold)
         };
-        int y2 = 35;
+        int yRow1 = 30;
+        int yRow2 = 65;
         int step2X = 15;
         
-        Label lblFechaGen = new Label { Text = "F. Generación:", Location = new Point(step2X, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtFechaGen = new TextBox { Location = new Point(step2X + 90, y2), Width = 70, MaxLength = 8, Font = new Font(this.Font, FontStyle.Regular) };
+        // Row 1: Dates
+        Label lblFechaGen = new Label { Text = "F. Generación:", Location = new Point(step2X, yRow1 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtFechaGen = new TextBox { Location = new Point(step2X + 105, yRow1), Width = 100, MaxLength = 8, Font = new Font(this.Font, FontStyle.Regular) };
         txtFechaGen.TextChanged += (s, e) => { _config.Overrides.FechaGeneracion = txtFechaGen.Text; MarkDirty(); UpdateDateWarnings(); };
-        Button btnCalGen = new Button { Text = "📅", Location = new Point(step2X + 165, y2 - 1), Width = 30, Height = 25 };
+        Button btnCalGen = new Button { Text = "📅", Location = new Point(step2X + 210, yRow1 - 1), Width = 35, Height = 26, Font = new Font("Segoe UI Emoji", 10) };
         btnCalGen.Click += (s, e) => ShowDatePicker(txtFechaGen);
-        Button btnTodayGen = new Button { Text = "Hoy", Location = new Point(step2X + 198, y2 - 1), Width = 40, Height = 25 };
+        Button btnTodayGen = new Button { Text = "Hoy", Location = new Point(step2X + 250, yRow1 - 1), Width = 45, Height = 26 };
         btnTodayGen.Click += (s, e) => { txtFechaGen.Text = DateTime.Now.ToString("yyyyMMdd"); };
-        lblFechaGenWarning = new Label { Text = "", Location = new Point(step2X + 240, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
+        lblFechaGenWarning = new Label { Text = "", Location = new Point(step2X + 300, yRow1 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        Label lblFechaCarta = new Label { Text = "F. Carta:", Location = new Point(step2X + 270, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtFechaCarta = new TextBox { Location = new Point(step2X + 330, y2), Width = 70, MaxLength = 8, Font = new Font(this.Font, FontStyle.Regular) };
+        Label lblFechaCarta = new Label { Text = "F. Carta:", Location = new Point(step2X + 370, yRow1 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtFechaCarta = new TextBox { Location = new Point(step2X + 440, yRow1), Width = 100, MaxLength = 8, Font = new Font(this.Font, FontStyle.Regular) };
         txtFechaCarta.TextChanged += (s, e) => { _config.Overrides.FechaCarta = txtFechaCarta.Text; MarkDirty(); UpdateDateWarnings(); };
-        Button btnCalCarta = new Button { Text = "📅", Location = new Point(step2X + 405, y2 - 1), Width = 30, Height = 25 };
+        Button btnCalCarta = new Button { Text = "📅", Location = new Point(step2X + 545, yRow1 - 1), Width = 35, Height = 26, Font = new Font("Segoe UI Emoji", 10) };
         btnCalCarta.Click += (s, e) => ShowDatePicker(txtFechaCarta);
-        Button btnTodayCarta = new Button { Text = "Hoy", Location = new Point(step2X + 438, y2 - 1), Width = 40, Height = 25 };
+        Button btnTodayCarta = new Button { Text = "Hoy", Location = new Point(step2X + 585, yRow1 - 1), Width = 45, Height = 26 };
         btnTodayCarta.Click += (s, e) => { txtFechaCarta.Text = DateTime.Now.ToString("yyyyMMdd"); };
-        lblFechaCartaWarning = new Label { Text = "", Location = new Point(step2X + 482, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
+        lblFechaCartaWarning = new Label { Text = "", Location = new Point(step2X + 635, yRow1 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        Label lblLote = new Label { Text = "Lote:", Location = new Point(step2X + 510, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtLote = new TextBox { Location = new Point(step2X + 545, y2), Width = 50, MaxLength = 4, Font = new Font(this.Font, FontStyle.Regular) };
+        // Row 2: Others
+        Label lblLote = new Label { Text = "Lote:", Location = new Point(step2X, yRow2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtLote = new TextBox { Location = new Point(step2X + 105, yRow2), Width = 70, MaxLength = 4, Font = new Font(this.Font, FontStyle.Regular) };
         txtLote.TextChanged += (s, e) => { _config.Overrides.Lote = txtLote.Text; MarkDirty(); };
 
-        Label lblCodDoc = new Label { Text = "Cód. Doc:", Location = new Point(step2X + 610, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtCodDoc = new TextBox { Location = new Point(step2X + 680, y2), Width = 70, MaxLength = 6, Font = new Font(this.Font, FontStyle.Regular) };
+        Label lblCodDoc = new Label { Text = "Cód. Documento:", Location = new Point(step2X + 200, yRow2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtCodDoc = new TextBox { Location = new Point(step2X + 325, yRow2), Width = 100, MaxLength = 6, Font = new Font(this.Font, FontStyle.Regular) };
         txtCodDoc.TextChanged += (s, e) => { _config.Overrides.CodigoDocumento = txtCodDoc.Text; MarkDirty(); UpdateFieldWarnings(); };
-        lblCodDocWarning = new Label { Text = "", Location = new Point(step2X + 755, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
+        lblCodDocWarning = new Label { Text = "", Location = new Point(step2X + 430, yRow2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
-        Label lblOficina = new Label { Text = "Oficina:", Location = new Point(step2X + 790, y2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtOficina = new TextBox { Location = new Point(step2X + 850, y2), Width = 50, MaxLength = 5, Font = new Font(this.Font, FontStyle.Regular) };
+        Label lblOficina = new Label { Text = "Oficina:", Location = new Point(step2X + 500, yRow2 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtOficina = new TextBox { Location = new Point(step2X + 570, yRow2), Width = 70, MaxLength = 5, Font = new Font(this.Font, FontStyle.Regular) };
         txtOficina.TextChanged += (s, e) => { _config.Overrides.Oficina = txtOficina.Text; MarkDirty(); UpdateFieldWarnings(); };
-        lblOficinaWarning = new Label { Text = "", Location = new Point(step2X + 905, y2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
+        lblOficinaWarning = new Label { Text = "", Location = new Point(step2X + 645, yRow2 + 3), AutoSize = true, ForeColor = Color.DarkOrange };
 
         grpStep2.Controls.AddRange(new Control[] { 
             lblFechaGen, txtFechaGen, btnCalGen, btnTodayGen, lblFechaGenWarning,
@@ -237,20 +246,20 @@ public class MainForm : Form, IGenerationProgress
         // --- PASO 3: SELECCIÓN DE REGISTROS Y SALIDA ---
         GroupBox grpStep3 = new GroupBox { 
             Text = " Paso 3: Selección de Registros y Salida ", 
-            Bounds = new Rectangle(15, 250, 920, 110),
+            Bounds = new Rectangle(15, 265, 920, 110),
             Font = new Font(this.Font, FontStyle.Bold)
         };
         int y3 = 30;
-        Label lblRangeFrom = new Label { Text = "Desde Reg:", Location = new Point(lblX, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtRangeFrom = new TextBox { Location = new Point(txtX, y3), Width = 60, Font = new Font(this.Font, FontStyle.Regular) };
+        Label lblRangeFrom = new Label { Text = "Desde Registro:", Location = new Point(lblX, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtRangeFrom = new TextBox { Location = new Point(txtX, y3), Width = 80, Font = new Font(this.Font, FontStyle.Regular) };
         txtRangeFrom.TextChanged += (s, e) => { _config.RangeFrom = int.TryParse(txtRangeFrom.Text, out int v) ? v : null; MarkDirty(); };
 
-        Label lblRangeTo = new Label { Text = "Hasta:", Location = new Point(230, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        txtRangeTo = new TextBox { Location = new Point(280, y3), Width = 60, Font = new Font(this.Font, FontStyle.Regular) };
+        Label lblRangeTo = new Label { Text = "Hasta:", Location = new Point(250, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        txtRangeTo = new TextBox { Location = new Point(300, y3), Width = 80, Font = new Font(this.Font, FontStyle.Regular) };
         txtRangeTo.TextChanged += (s, e) => { _config.RangeTo = int.TryParse(txtRangeTo.Text, out int v) ? v : null; MarkDirty(); };
 
-        Label lblOutputType = new Label { Text = "Tipo Salida:", Location = new Point(380, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
-        cmbOutputType = new ComboBox { Location = new Point(480, y3), Width = 150, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font(this.Font, FontStyle.Regular) };
+        Label lblOutputType = new Label { Text = "Tipo Salida:", Location = new Point(500, y3 + 3), AutoSize = true, Font = new Font(this.Font, FontStyle.Regular) };
+        cmbOutputType = new ComboBox { Location = new Point(600, y3), Width = 150, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font(this.Font, FontStyle.Regular) };
         cmbOutputType.Items.AddRange(new object[] { "DOCX", "PDF", "PDF + GAWEB" });
         cmbOutputType.SelectedIndexChanged += (s, e) => { 
             _config.OutputType = cmbOutputType.SelectedIndex switch { 0 => "DOCX", 1 => "PDF", _ => "PDF_GAWEB" }; 
@@ -274,7 +283,7 @@ public class MainForm : Form, IGenerationProgress
         // --- PASO 4: ACCIONES PRINCIPALES ---
         _btnMapping = new Button {
             Text = "📋 CONFIGURAR MAPEO",
-            Location = new Point(15, 380),
+            Location = new Point(15, 400),
             Width = 240,
             Height = 60,
             BackColor = Color.Gold,
@@ -285,7 +294,7 @@ public class MainForm : Form, IGenerationProgress
 
         btnGenerate = new Button {
             Text = "🚀 INICIAR GENERACIÓN",
-            Location = new Point(270, 380),
+            Location = new Point(270, 400),
             Width = 400,
             Height = 60,
             BackColor = Color.LightSkyBlue,
@@ -295,13 +304,13 @@ public class MainForm : Form, IGenerationProgress
         };
         btnGenerate.Click += BtnGenerate_Click;
 
-        btnCancel = new Button {
+        btnCancel = new Button { // Renamed to btnStop in instruction, but keeping original name as per instruction to only make specified changes.
             Text = "DETENER",
-            Location = new Point(685, 380),
-            Width = 150,
+            Location = new Point(685, 410), // Adjusted Y
+            Width = 140, // Adjusted Width
             Height = 60,
             BackColor = Color.LightCoral,
-            Font = new Font(this.Font.FontFamily, 10, FontStyle.Bold),
+            Font = new Font(this.Font.FontFamily, 11, FontStyle.Bold), // Adjusted Font
             Enabled = false,
             Cursor = Cursors.Hand
         };
@@ -456,11 +465,17 @@ public class MainForm : Form, IGenerationProgress
 
     private void MnuProperties_Click(object? sender, EventArgs e)
     {
-        using var prop = new PropertiesForm(_config.OutputDirectory, true, _config.SyncfusionLicenseKey ?? "");
+        using var prop = new PropertiesForm(_config.OutputDirectory, _config.OutputType == "PDF_GAWEB", _config.SyncfusionLicenseKey ?? "", _config.PdfLibrary);
         if (prop.ShowDialog() == DialogResult.OK)
         {
             _config.OutputDirectory = prop.OutputPath;
             _config.SyncfusionLicenseKey = prop.SyncfusionKey;
+            _config.PdfLibrary = prop.PdfLibrary;
+            if (prop.GawebMode) 
+                _config.OutputType = "PDF_GAWEB";
+            else if (_config.OutputType == "PDF_GAWEB")
+                _config.OutputType = "PDF"; // Fallback if GAWEB was unchecked
+
             MarkDirty();
             Log($"Configuración actualizada.");
         }

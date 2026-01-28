@@ -10,15 +10,18 @@ public class PropertiesForm : Form
     public string OutputPath { get; private set; }
     public bool GawebMode { get; private set; }
     public string SyncfusionKey { get; private set; }
+    public string PdfLibrary { get; private set; }
 
     private TextBox txtOutputPath;
     private CheckBox chkGawebMode;
     private TextBox txtLicenseKey;
+    private Label lblKey;
+    private ComboBox cmbLibrary;
 
-    public PropertiesForm(string currentPath, bool currentMode, string currentKey)
+    public PropertiesForm(string currentPath, bool currentMode, string currentKey, string currentLibrary)
     {
         this.Text = "Propiedades";
-        this.Size = new Size(500, 350);
+        this.Size = new Size(500, 420);
         this.StartPosition = FormStartPosition.CenterParent;
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
@@ -27,8 +30,10 @@ public class PropertiesForm : Form
         OutputPath = currentPath;
         GawebMode = currentMode;
         SyncfusionKey = currentKey; 
+        PdfLibrary = currentLibrary;
 
         InitializeControls();
+        UpdateLicenseVisibility();
     }
 
     private void InitializeControls()
@@ -72,8 +77,20 @@ public class PropertiesForm : Form
 
         y += 40;
 
+        // PDF Library
+        var lblLibraryLabel = new Label { Text = "Librería PDF por defecto:", Location = new Point(20, y), AutoSize = true, Font = new Font(this.Font, FontStyle.Bold) };
+        y += 25;
+        cmbLibrary = new ComboBox { Location = new Point(20, y), Width = 200, DropDownStyle = ComboBoxStyle.DropDownList };
+        cmbLibrary.Items.AddRange(new object[] { "Word", "Syncfusion" });
+        cmbLibrary.SelectedItem = PdfLibrary == "Syncfusion" ? "Syncfusion" : "Word";
+        cmbLibrary.SelectedIndexChanged += (s, e) => UpdateLicenseVisibility();
+        this.Controls.Add(lblLibraryLabel);
+        this.Controls.Add(cmbLibrary);
+
+        y += 40;
+
         // License Key
-        var lblKey = new Label { Text = "Syncfusion License Key (Gratuito - Comunidad):", Location = new Point(20, y), AutoSize = true, Font = new Font(this.Font, FontStyle.Bold) };
+        lblKey = new Label { Text = "Syncfusion License Key (Gratuito - Comunidad):", Location = new Point(20, y), AutoSize = true, Font = new Font(this.Font, FontStyle.Bold) };
         y += 25;
         txtLicenseKey = new TextBox { Text = SyncfusionKey, Location = new Point(20, y), Width = 440 };
         this.Controls.Add(lblKey);
@@ -104,11 +121,19 @@ public class PropertiesForm : Form
             OutputPath = txtOutputPath.Text;
             GawebMode = chkGawebMode.Checked;
             SyncfusionKey = txtLicenseKey.Text;
+            PdfLibrary = cmbLibrary.SelectedItem?.ToString() ?? "Word";
         };
 
         this.Controls.Add(btnOk);
         this.Controls.Add(btnCancel);
         this.AcceptButton = btnOk;
         this.CancelButton = btnCancel;
+    }
+
+    private void UpdateLicenseVisibility()
+    {
+        bool isSyncfusion = cmbLibrary.SelectedItem?.ToString() == "Syncfusion";
+        lblKey.Visible = isSyncfusion;
+        txtLicenseKey.Visible = isSyncfusion;
     }
 }
