@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { ArrowRight, Cpu, Sliders, Database, ShieldCheck } from 'lucide-react';
+import { ArrowRight, HardDrive, History, FileText } from 'lucide-react';
 import { HeroHeader } from '@ajabadia/styles';
 import Link from 'next/link';
 import { GlobalFooter } from '@ajabadia/ecosystem-widgets';
@@ -45,48 +45,48 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           {/* Tactical Key Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6" role="region" aria-label="System Capabilities">
             
-            {/* Feature 1: Business Intelligence / LMS */}
+            {/* Feature 1: Secure Storage */}
             <div className="p-6 bg-card border border-border rounded-xl flex flex-col gap-4">
               <div className="p-2.5 bg-secondary/10 border border-border text-[#2dd4bf] w-fit rounded-lg">
-                <Cpu className="w-5 h-5" />
+                <HardDrive className="w-5 h-5" />
               </div>
               <h2 className="text-sm font-black uppercase tracking-wider text-foreground">
-                {locale === 'es' ? 'Capacitación y Desempeño' : 'Training & Performance'}
+                {locale === 'es' ? 'Almacenamiento Seguro' : 'Secure Storage'}
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {locale === 'es'
-                  ? 'Consolidación de curvas de aprendizaje, tasas de finalización, histogramas de Gauss y telemetría de distractores de ABDQuiz.'
-                  : 'Consolidation of learning curves, completion rates, Gauss grade distributions, and distractor telemetry from ABDQuiz.'}
+                  ? 'Aislamiento físico multitenant y carga integrada con proveedores de almacenamiento como Cloudinary.'
+                  : 'Physical multi-tenant isolation and integrated upload with storage providers such as Cloudinary.'}
               </p>
             </div>
 
-            {/* Feature 2: Governance and Resources */}
+            {/* Feature 2: Immutable Versioning */}
             <div className="p-6 bg-card border border-border rounded-xl flex flex-col gap-4">
               <div className="p-2.5 bg-secondary/10 border border-border text-[#2dd4bf] w-fit rounded-lg">
-                <Database className="w-5 h-5" />
+                <History className="w-5 h-5" />
               </div>
               <h2 className="text-sm font-black uppercase tracking-wider text-foreground">
-                {locale === 'es' ? 'Gobernanza y Recursos' : 'Governance & Resources'}
+                {locale === 'es' ? 'Versionado Inmutable' : 'Immutable Versioning'}
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {locale === 'es'
-                  ? 'Monitoreo de la utilización espacial de almacenamiento y activos de Spaces, junto al control y vigencia de licencias.'
-                  : 'Monitoring of spatial resource storage and assets usage in Spaces, alongside licensed application tracking.'}
+                  ? 'Historial de versiones append-only protegido contra sobrescritura o destrucción accidental.'
+                  : 'Append-only version history protected against accidental overwrites or destruction.'}
               </p>
             </div>
 
-            {/* Feature 3: Security & Identity Analytics */}
+            {/* Feature 3: Retention & Audit */}
             <div className="p-6 bg-card border border-border rounded-xl flex flex-col gap-4">
               <div className="p-2.5 bg-secondary/10 border border-border text-[#2dd4bf] w-fit rounded-lg">
-                <Sliders className="w-5 h-5" />
+                <FileText className="w-5 h-5" />
               </div>
               <h2 className="text-sm font-black uppercase tracking-wider text-foreground">
-                {locale === 'es' ? 'Seguridad e Identidad' : 'Security & Identity'}
+                {locale === 'es' ? 'Retención y Auditoría' : 'Retention & Audit'}
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {locale === 'es'
-                  ? 'Telemetría operacional de accesos en tiempo real, histórico de logins fallidos, y tasas de adopción de MFA/Passkeys en ABDAuth.'
-                  : 'Real-time operational access telemetry, timeline of failed logins, and MFA/Passkeys adoption rates from ABDAuth.'}
+                  ? 'Trazabilidad bancaria de eventos a ABDLogs y ciclo de vida automatizado con purga controlada.'
+                  : 'Bank-grade event traceability to ABDLogs and automated lifecycle with controlled purging.'}
               </p>
             </div>
 

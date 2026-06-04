@@ -1,26 +1,25 @@
 {
   "common": {
-    "appTitle": "ABD Analytics (ABDBoard)",
+    "appTitle": "ABDFiles (Gestor Documental)",
     "close": "Cerrar",
     "settings": "Configuración",
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión",
     "menuTitle": "Panel de Control",
     "homeMenu": "Inicio",
-    "adminMenu": "Administración",
-    "historyMenu": "Analíticas"
+    "adminMenu": "Administración"
   },
   "home": {
-    "status": "Servicio de Analíticas: Activo",
-    "tagline": "Cuadro de mando unificado y consola de inteligencia de negocio para todo el ecosistema de aplicaciones ABD.",
-    "accessControlPlane": "ACCEDER AL PANEL ANALÍTICO",
+    "status": "Servicio Documental: Activo",
+    "tagline": "Gestor y almacén documental multi-tenant para versionado, retención y auditoría inmutable de archivos.",
+    "accessControlPlane": "ACCEDER AL GESTOR DOCUMENTAL",
     "engine": "Motor OMEGA",
-    "style": "Tech-Noir v1.2",
-    "version": "v1.0.0-PROD",
+    "style": "Aseptic Retro-Minimalist v1.0",
+    "version": "v1.0.0-DEV",
     "coreLabel": "Núcleo",
     "logicLabel": "Lógica",
     "styleLabel": "Estilo",
-    "tenants": "ANALÍTICAS"
+    "tenants": "DOCUMENTAL"
   },
   "widgets": {
     "tenant_selector_select": "Seleccionar organización",

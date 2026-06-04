@@ -4,38 +4,47 @@ import React from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { CommandPalette, Command } from '@ajabadia/ecosystem-widgets';
-import { ShieldCheck, Server, Globe, LogOut, Settings } from 'lucide-react';
+import { LayoutDashboard, BarChart3, ShieldCheck, Globe, LogOut, Settings } from 'lucide-react';
 
-export function LogsCommandPalette() {
+export function AnalyticsCommandPalette() {
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
 
   const commands: Command[] = [
-    // Navigation Category
     {
-      id: 'nav-audit',
-      title: locale === 'es' ? 'Visor Forense (Audit)' : 'Forensic Viewer',
-      description: locale === 'es' ? 'Explorar el registro de logs unificado' : 'Explore the unified log registry',
-      category: locale === 'es' ? 'Auditoría' : 'Audit',
-      shortcut: ['g', 'a'],
+      id: 'nav-dashboard',
+      title: locale === 'es' ? 'Panel de Control' : 'Dashboard',
+      description: locale === 'es' ? 'Ir al panel de analíticas central' : 'Go to the central analytics dashboard',
+      category: locale === 'es' ? 'Navegación' : 'Navigation',
+      shortcut: ['g', 'd'],
+      icon: <LayoutDashboard className="w-4 h-4" />,
+      action: () => {
+        router.push('/admin');
+      }
+    },
+    {
+      id: 'nav-suite',
+      title: locale === 'es' ? 'Resumen de la Suite' : 'Suite Summary',
+      description: locale === 'es' ? 'Ver métricas generales del ecosistema' : 'View overall ecosystem metrics',
+      category: locale === 'es' ? 'Navegación' : 'Navigation',
+      shortcut: ['g', 's'],
+      icon: <BarChart3 className="w-4 h-4" />,
+      action: () => {
+        router.push('/admin');
+      }
+    },
+    {
+      id: 'nav-security',
+      title: locale === 'es' ? 'Panel de Seguridad' : 'Security Panel',
+      description: locale === 'es' ? 'Estado de MFA y accesos' : 'MFA status and access logs',
+      category: locale === 'es' ? 'Navegación' : 'Navigation',
+      shortcut: ['g', 'm'],
       icon: <ShieldCheck className="w-4 h-4" />,
       action: () => {
         router.push('/admin');
       }
     },
-    {
-      id: 'nav-status',
-      title: locale === 'es' ? 'Estado del Servicio' : 'Service Status',
-      description: locale === 'es' ? 'Verificar ingestas y latencia' : 'Check ingestion and latency',
-      category: locale === 'es' ? 'Auditoría' : 'Audit',
-      shortcut: ['g', 's'],
-      icon: <Server className="w-4 h-4" />,
-      action: () => {
-        router.push('/admin');
-      }
-    },
-    // Configuration / Action Category
     {
       id: 'action-language',
       title: locale === 'es' ? 'Switch to English' : 'Cambiar a Español',
@@ -78,7 +87,7 @@ export function LogsCommandPalette() {
   return (
     <CommandPalette
       commands={commands}
-      placeholder={locale === 'es' ? 'Escribe un comando o busca trazas...' : 'Type a command or search traces...'}
+      placeholder={locale === 'es' ? 'Escribe un comando o navega...' : 'Type a command or navigate...'}
     />
   );
 }

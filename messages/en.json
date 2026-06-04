@@ -1,26 +1,25 @@
 {
   "common": {
-    "appTitle": "ABD Analytics (ABDBoard)",
+    "appTitle": "ABDFiles (Document Manager)",
     "close": "Close",
     "settings": "Settings",
     "login": "Sign In",
     "logout": "Logout",
     "menuTitle": "Control Panel",
     "homeMenu": "Home",
-    "adminMenu": "Administration",
-    "historyMenu": "Analytics"
+    "adminMenu": "Administration"
   },
   "home": {
-    "status": "Analytics Service: Active",
-    "tagline": "Unified dashboard and business intelligence console for the entire ABD ecosystem of applications.",
-    "accessControlPlane": "ACCESS ANALYTICS PANEL",
+    "status": "Document Service: Active",
+    "tagline": "Multi-tenant document repository and manager for immutable versioning, retention, and forensic auditing.",
+    "accessControlPlane": "ACCESS DOCUMENT MANAGER",
     "engine": "OMEGA Engine",
-    "style": "Tech-Noir v1.2",
-    "version": "v1.0.0-PROD",
+    "style": "Aseptic Retro-Minimalist v1.0",
+    "version": "v1.0.0-DEV",
     "coreLabel": "Core",
     "logicLabel": "Logic",
     "styleLabel": "Style",
-    "tenants": "ANALYTICS"
+    "tenants": "DOCUMENTS"
   },
   "widgets": {
     "tenant_selector_select": "Select organization",
