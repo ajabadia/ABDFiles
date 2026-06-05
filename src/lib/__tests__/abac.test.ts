@@ -2,11 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { assertAccess } from '../abac';
 import * as satelliteSdk from '@ajabadia/satellite-sdk';
 
-vi.mock('@ajabadia/satellite-sdk', async (importOriginal) => {
-  const actual = await importOriginal() as Record<string, unknown>;
+vi.mock('@ajabadia/satellite-sdk', () => {
+  class InsufficientPrivilegesError extends Error {
+    constructor(message: string) {
+      super(message);
+      this.name = 'InsufficientPrivilegesError';
+    }
+  }
   return {
-    ...actual,
-    evaluateAccess: vi.fn()
+    evaluateAccess: vi.fn(),
+    InsufficientPrivilegesError
   };
 });
 

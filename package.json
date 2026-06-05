@@ -14,7 +14,10 @@
     "test:e2e": "powershell -ExecutionPolicy Bypass -File scripts/run-e2e.ps1"
   },
   "pnpm": {
-    "onlyBuiltDependencies": []
+    "onlyBuiltDependencies": [],
+    "overrides": {
+      "@ajabadia/ecosystem-widgets": "link:../ABDEcosystemWidgets"
+    }
   },
   "dependencies": {
     "@ajabadia/ecosystem-widgets": "^1.0.29",
