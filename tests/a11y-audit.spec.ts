@@ -8,7 +8,7 @@ import AxeBuilder from '@axe-core/playwright';
  * y reporta violaciones WCAG 2.2 AA con detalles precisos para corrección.
  */
 
-const BASE_URL = 'http://localhost:3700';
+const BASE_URL = 'http://localhost:5004';
 
 const PAGES = [
   { path: '/es', name: 'Landing pública' },

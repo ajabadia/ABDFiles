@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3800 --webpack",
+    "dev": "next dev -p 5005 --webpack",
     "prebuild": "node ./scripts/clean-quiz.js",
     "build": "next build --webpack",
-    "start": "next start -p 3800",
+    "start": "next start -p 5005",
     "lint": "eslint",
     "full-audit": "powershell -File ./scripts/abd-audit.ps1",
     "test": "vitest run",

@@ -13,7 +13,7 @@ export const IntegrationLogsService = {
     eventType: string,
     payload: Record<string, unknown>
   ): Promise<void> {
-    const logsUrl = process.env.NEXT_PUBLIC_LOGS_URL || 'http://localhost:3600';
+    const logsUrl = process.env.NEXT_PUBLIC_LOGS_URL || 'http://localhost:5003';
     const secret = process.env.LOGS_SECRET_TOKEN || 'dev-logs-token';
 
     try {

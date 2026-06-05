@@ -45,7 +45,7 @@ export function SidebarNavigation({ session, logoUrl, tenantSelectorSlot, settin
     const hostname = window.location.hostname;
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLogsAuditUrl(`http://localhost:3600/${locale}/admin/audit`);
+      setLogsAuditUrl(`http://localhost:5003/${locale}/admin/audit`);
     } else {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLogsAuditUrl(`/admin/audit`);
