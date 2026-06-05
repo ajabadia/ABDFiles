@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@ajabadia/ecosystem-widgets": "^1.0.29",
-    "@ajabadia/satellite-sdk": "^1.0.29",
+    "@ajabadia/satellite-sdk": "^1.0.30",
     "@ajabadia/styles": "^1.0.36",
     "@aws-sdk/client-s3": "^3.1062.0",
     "@aws-sdk/s3-request-presigner": "^3.1062.0",
