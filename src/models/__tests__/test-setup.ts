@@ -23,6 +23,13 @@ vi.mock('@ajabadia/satellite-sdk', () => ({
     },
   }),
 
+  // ── Logger ──
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+
   // ── Tenant Context ──
   TenantContext: class {},
   tenantStorage,

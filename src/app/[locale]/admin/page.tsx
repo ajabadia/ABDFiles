@@ -13,8 +13,7 @@ import Link from 'next/link';
  * 🛰️ Inner Data Wrapper Component that handles DB Querying asynchronously
  */
 async function DashboardDataWrapper({ locale }: { locale: string }) {
-  const metrics = await getDashboardMetrics();
-  return <DashboardClient metrics={metrics} locale={locale} />;
+  return <DashboardClient locale={locale} />;
 }
 
 /**

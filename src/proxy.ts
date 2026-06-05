@@ -1,11 +1,12 @@
 import { withIndustrialAuth } from '@ajabadia/satellite-sdk';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { NextRequest, NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware(routing);
 
 /**
- * 🛰️ ABDAnalytics Proxy Guard
+ * 🛰️ ABDFiles Proxy Guard
  * Next.js 16 centralized ecosystem proxy guard utilizing @ajabadia/satellite-sdk.
  */
 export const proxy = withIndustrialAuth({
@@ -14,7 +15,7 @@ export const proxy = withIndustrialAuth({
   clientSecret: process.env.AUTH_CLIENT_SECRET || '',
   jwtSecret: process.env.AUTH_JWT_SECRET!,
   publicPaths: ['/', '/logout-success'],
-  intlMiddleware: intlMiddleware as any,
+  intlMiddleware: intlMiddleware as unknown as never,
 });
 
 export const config = {

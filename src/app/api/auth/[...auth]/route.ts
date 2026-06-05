@@ -1,4 +1,5 @@
 import { createAuthRouteHandler } from '@ajabadia/satellite-sdk';
+import { NextRequest } from 'next/server';
 
 /**
  * 🛰️ Catch-All SSO Auth Route Handler
@@ -11,10 +12,10 @@ const handler = createAuthRouteHandler({
   jwtSecret: process.env.AUTH_JWT_SECRET!,
 });
 
-export async function GET(request: any, context: any) {
-  return handler(request);
+export async function GET(request: NextRequest) {
+  return handler(request as unknown as Parameters<typeof handler>[0]);
 }
 
-export async function POST(request: any, context: any) {
-  return handler(request);
+export async function POST(request: NextRequest) {
+  return handler(request as unknown as Parameters<typeof handler>[0]);
 }

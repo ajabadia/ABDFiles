@@ -100,9 +100,10 @@ async function checkMongoConnection(uri: string): Promise<{ ok: boolean; error?:
     const duration = Date.now() - start;
     await mongoose.disconnect();
     return { ok: true, durationMs: duration };
-  } catch (err: any) {
+  } catch (err: unknown) {
     const duration = Date.now() - start;
-    return { ok: false, error: err?.message || String(err), durationMs: duration };
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: errorMessage, durationMs: duration };
   }
 }
 
