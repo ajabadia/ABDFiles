@@ -1,5 +1,5 @@
 {
-  "installCommand": "echo \"//npm.pkg.github.com/:_authToken=${GITHUB_NPM_TOKEN}\" >> .npmrc && pnpm install",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "buildCommand": "pnpm run build",
   "outputDirectory": ".next"
 }
