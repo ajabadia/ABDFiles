@@ -4,12 +4,12 @@
  * @refactorable true (contains multiple HTTP methods and business logic)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:4,sig:gazsym
- * @lastUpdated 2026-06-23T23:02:59.139Z
+ * @fingerprint exports:3,imports:4,sig:4ykvty
+ * @lastUpdated 2026-06-24T10:30:14.998Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { ConnectorService } from '@/services/connector-service';
 import { assertAccess } from '@/lib/abac';
 
@@ -37,10 +37,30 @@ export async function GET(
       return NextResponse.json({ error: 'Storage connector not found' }, { status: 404 });
     }
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'CONNECTOR_VIEW',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: {},
+    });
+
     return NextResponse.json(connector);
   } catch (error: unknown) {
-    console.error('[GET_CONNECTOR_BY_ID_ERROR]', error);
     const err = error as Error;
+    const { connectorId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'GET_CONNECTOR_BY_ID_ERROR',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, connectorId },
+    });
+    console.error('[GET_CONNECTOR_BY_ID_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -75,10 +95,30 @@ export async function PATCH(
       auditMode
     });
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'CONNECTOR_UPDATED',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { status, auditMode },
+    });
+
     return NextResponse.json(connector);
   } catch (error: unknown) {
-    console.error('[PATCH_CONNECTOR_ERROR]', error);
     const err = error as Error;
+    const { connectorId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'PATCH_CONNECTOR_ERROR',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, connectorId },
+    });
+    console.error('[PATCH_CONNECTOR_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -103,10 +143,29 @@ export async function DELETE(
     });
 
     await ConnectorService.deleteConnector(user.tenantId, connectorId);
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'CONNECTOR_DELETED',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: {},
+    });
     return NextResponse.json({ success: true, message: 'Connector deleted successfully' });
   } catch (error: unknown) {
-    console.error('[DELETE_CONNECTOR_ERROR]', error);
     const err = error as Error;
+    const { connectorId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'DELETE_CONNECTOR_ERROR',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, connectorId },
+    });
+    console.error('[DELETE_CONNECTOR_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

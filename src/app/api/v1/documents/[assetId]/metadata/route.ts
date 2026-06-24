@@ -4,12 +4,12 @@
  * @refactorable false
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:2,imports:4,sig:9tz5cf
- * @lastUpdated 2026-06-23T23:03:25.346Z
+ * @fingerprint exports:2,imports:4,sig:o6ap3a
+ * @lastUpdated 2026-06-24T10:30:45.824Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 import { assertAccess } from '@/lib/abac';
 
@@ -39,10 +39,30 @@ export async function PATCH(
       sensitivityLevel
     });
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'METADATA_UPDATED',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { title: title || null, tags: tags || null, sensitivityLevel: sensitivityLevel || null },
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    console.error('[PATCH_METADATA_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'PATCH_METADATA_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[PATCH_METADATA_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

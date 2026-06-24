@@ -1,15 +1,15 @@
 /**
- * @purpose Gestiona holds legales para activos documentales mediante el manejo de solicitudes GET y POST para listar y aplicar holds.
+ * @purpose Gestiona holds legales para activos de documentos mediante el manejo de solicitudes GET y POST para listar y aplicar los holds.
  * @purpose_en Manages legal holds for document assets by handling GET and POST requests to list and apply holds.
- * @refactorable false
+ * @refactorable true (contains too many state variables and UI parts)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:5,sig:ld6bdh
- * @lastUpdated 2026-06-23T23:03:17.720Z
+ * @fingerprint exports:3,imports:5,sig:133s1jy
+ * @lastUpdated 2026-06-24T10:30:36.918Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 import { assertAccess } from '@/lib/abac';
 import LegalHold from '@/models/LegalHold';
@@ -30,10 +30,29 @@ export async function GET(
     await assertAccess({ userId: user.email || 'system', tenantId: user.tenantId, resource: 'document/' + assetId, action: 'view' });
 
     const holds = await LegalHold.find({ tenantId: user.tenantId, assetId }).sort({ createdAt: -1 });
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'HOLDS_LIST',
+      entityType: 'LEGAL_HOLD',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { count: holds.length },
+    });
     return NextResponse.json(holds);
   } catch (error: unknown) {
-    console.error('[GET_HOLDS_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'GET_HOLDS_ERROR',
+      entityType: 'LEGAL_HOLD',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[GET_HOLDS_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -60,10 +79,30 @@ export async function POST(
       user.email || 'system'
     );
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'HOLD_CREATED',
+      entityType: 'LEGAL_HOLD',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { reason },
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    console.error('[POST_HOLD_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'POST_HOLD_ERROR',
+      entityType: 'LEGAL_HOLD',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[POST_HOLD_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

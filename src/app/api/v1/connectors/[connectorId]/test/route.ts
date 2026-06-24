@@ -4,12 +4,12 @@
  * @refactorable false
  * @classification Business Service
  * @complexity Low
- * @fingerprint exports:1,imports:4,sig:wk5gx6
- * @lastUpdated 2026-06-23T23:03:03.398Z
+ * @fingerprint exports:1,imports:4,sig:1t7u7mm
+ * @lastUpdated 2026-06-24T10:30:19.685Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { ConnectorService } from '@/services/connector-service';
 import { assertAccess } from '@/lib/abac';
 
@@ -33,10 +33,29 @@ export async function POST(
     });
 
     const result = await ConnectorService.testConnection(user.tenantId, connectorId);
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'CONNECTOR_TEST_SUCCESS',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { success: result?.success },
+    });
     return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error('[TEST_CONNECTOR_ERROR]', error);
     const err = error as Error;
+    const { connectorId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'TEST_CONNECTOR_ERROR',
+      entityType: 'CONNECTOR',
+      entityId: connectorId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, connectorId },
+    });
+    console.error('[TEST_CONNECTOR_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

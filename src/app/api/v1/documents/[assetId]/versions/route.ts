@@ -1,15 +1,15 @@
 /**
  * @purpose Gestiona el recuperar y crear versiones de documentos para un activo específico.
  * @purpose_en Manages the retrieval and creation of document versions for a specific asset.
- * @refactorable false
+ * @refactorable true (contains too many state variables and UI parts)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:5,sig:1ojvt4y
- * @lastUpdated 2026-06-23T23:03:34.801Z
+ * @fingerprint exports:3,imports:5,sig:19jqp21
+ * @lastUpdated 2026-06-24T10:30:56.416Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 import DocumentVersion from '@/models/DocumentVersion';
 import { assertAccess } from '@/lib/abac';
@@ -34,10 +34,30 @@ export async function GET(
       assetId
     }).sort({ versionNumber: -1 });
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'VERSIONS_LIST',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { count: versions.length },
+    });
+
     return NextResponse.json(versions);
   } catch (error: unknown) {
-    console.error('[GET_VERSIONS_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'GET_VERSIONS_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[GET_VERSIONS_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -77,10 +97,30 @@ export async function POST(
       correlationId
     });
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'DOCUMENT_VERSION_CREATED',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { versionNumber: version?.versionNumber, sizeBytes: file.size, correlationId },
+    });
+
     return NextResponse.json(version, { status: 201 });
   } catch (error: unknown) {
-    console.error('[POST_VERSION_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'POST_VERSION_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[POST_VERSION_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

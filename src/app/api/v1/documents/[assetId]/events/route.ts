@@ -4,12 +4,12 @@
  * @refactorable false
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:2,imports:4,sig:ejzvgd
- * @lastUpdated 2026-06-23T23:03:12.961Z
+ * @fingerprint exports:2,imports:4,sig:l6ct11
+ * @lastUpdated 2026-06-24T10:30:30.647Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import DocumentEvent from '@/models/DocumentEvent';
 import { assertAccess } from '@/lib/abac';
 
@@ -29,10 +29,29 @@ export async function GET(
     await assertAccess({ userId: user.email || 'system', tenantId: user.tenantId, resource: 'document/' + assetId, action: 'audit' });
 
     const events = await DocumentEvent.find({ tenantId: user.tenantId, assetId }).sort({ createdAt: -1 });
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'EVENTS_LIST',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { count: events.length },
+    });
     return NextResponse.json(events);
   } catch (error: unknown) {
-    console.error('[GET_EVENTS_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'GET_EVENTS_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[GET_EVENTS_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

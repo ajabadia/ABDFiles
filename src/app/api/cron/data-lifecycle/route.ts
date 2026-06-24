@@ -4,11 +4,12 @@
  * @refactorable false
  * @classification Business Service
  * @complexity Low
- * @fingerprint exports:3,imports:2,sig:1jhxpqt
- * @lastUpdated 2026-06-23T23:02:50.751Z
+ * @fingerprint exports:3,imports:3,sig:irc7i4
+ * @lastUpdated 2026-06-24T10:30:05.717Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 
 export const revalidate = 0;
@@ -33,10 +34,29 @@ async function handler(request: NextRequest) {
 
     await DocumentService.purgeExpiredDocuments(new Date());
 
+    await logger.audit({
+      tenantId: 'system',
+      action: 'CRON_DATA_LIFECYCLE_PURGE',
+      entityType: 'DOCUMENT',
+      entityId: 'unknown',
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { processedAt: new Date().toISOString() },
+    });
+
     return NextResponse.json({ success: true, processedAt: new Date().toISOString() });
   } catch (error: unknown) {
-    console.error('[CRON_DATA_LIFECYCLE_ERROR]', error);
     const err = error as Error;
+    await logger.audit({
+      tenantId: 'system',
+      action: 'CRON_DATA_LIFECYCLE_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: 'unknown',
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message },
+    });
+    console.error('[CRON_DATA_LIFECYCLE_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

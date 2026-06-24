@@ -1,15 +1,15 @@
 /**
- * @purpose Gestiona solicitudes GET y DELETE para activos de documentos, asegurando el control de acceso y recuperando o eliminando metadata de documento.
+ * @purpose Gestiona GET y DELETE solicitudes para activos de documentos, asegurando el control de acceso y recuperando o eliminando metadata de documento.
  * @purpose_en Manages GET and DELETE requests for document assets, ensuring access control and retrieving or deleting document metadata.
  * @refactorable false
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:4,sig:6avm2q
- * @lastUpdated 2026-06-23T23:03:30.827Z
+ * @fingerprint exports:3,imports:4,sig:1gsom3a
+ * @lastUpdated 2026-06-24T10:30:52.044Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 import { assertAccess } from '@/lib/abac';
 
@@ -29,10 +29,29 @@ export async function GET(
     await assertAccess({ userId: user.email || 'system', tenantId: user.tenantId, resource: 'document/' + assetId, action: 'view' });
 
     const document = await DocumentService.getDocument(user.tenantId, assetId);
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'DOCUMENT_VIEW',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: {},
+    });
     return NextResponse.json(document);
   } catch (error: unknown) {
-    console.error('[GET_DOCUMENT_DETAIL_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'GET_DOCUMENT_DETAIL_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[GET_DOCUMENT_DETAIL_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -56,10 +75,30 @@ export async function DELETE(
       actorId: user.email || 'system'
     });
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'DOCUMENT_DELETE',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: {},
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    console.error('[DELETE_DOCUMENT_ERROR]', error);
     const err = error as Error;
+    const { assetId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'DELETE_DOCUMENT_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: assetId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId },
+    });
+    console.error('[DELETE_DOCUMENT_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

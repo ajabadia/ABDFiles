@@ -4,10 +4,11 @@
  * @refactorable true (contains multiple responsibilities such as validation, listing, creation, and testing)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:1,imports:3,sig:r3g0rh
- * @lastUpdated 2026-06-23T23:04:05.741Z
+ * @fingerprint exports:1,imports:4,sig:zmpbpt
+ * @lastUpdated 2026-06-24T10:31:10.509Z
  */
 
+import { logger } from '@ajabadia/satellite-sdk';
 import StorageConnector, { TStorageConnector } from '@/models/StorageConnector';
 import { StorageProviderRegistry } from './storage/storage-providers';
 import crypto from 'crypto';
@@ -194,6 +195,15 @@ export const ConnectorService = {
       return { success: true, message: 'Connection test passed successfully!' };
     } catch (e: unknown) {
       const err = e as Error;
+      logger.audit({
+        tenantId,
+        action: 'STORAGE_CONNECTION_TEST_FAILED',
+        entityType: 'CONNECTOR',
+        entityId: connectorId,
+        userId: 'system',
+        userEmail: 'system@abd.com',
+        changedFields: { error: err.message, connectorId },
+      });
       console.error(`[STORAGE_CONNECTION_TEST_FAILED] Connector: ${connectorId}`, err);
       return { success: false, message: `Connection failed: ${err.message || err}` };
     }

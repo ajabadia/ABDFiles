@@ -4,12 +4,12 @@
  * @refactorable true (contains business logic and data handling)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:5,sig:cesab4
- * @lastUpdated 2026-06-23T23:03:07.791Z
+ * @fingerprint exports:3,imports:5,sig:cqmci8
+ * @lastUpdated 2026-06-24T10:30:24.576Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 import { getCachedResponse, saveResponse } from '@/lib/idempotency';
 import { assertAccess } from '@/lib/abac';
@@ -36,10 +36,29 @@ export async function GET(request: NextRequest) {
       page
     });
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'DOCUMENTS_LIST',
+      entityType: 'DOCUMENT',
+      entityId: 'unknown',
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { status: status || 'all', limit, page, count: Array.isArray(documents) ? documents.length : 0 },
+    });
+
     return NextResponse.json(documents);
   } catch (error: unknown) {
-    console.error('[GET_DOCUMENTS_ERROR]', error);
     const err = error as Error;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'GET_DOCUMENTS_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: 'unknown',
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message },
+    });
+    console.error('[GET_DOCUMENTS_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -107,10 +126,29 @@ export async function POST(request: NextRequest) {
     // Save payload response cache for idempotency keys
     await saveResponse(user.tenantId, idempotencyKey, result, 201);
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'DOCUMENT_UPLOAD',
+      entityType: 'DOCUMENT',
+      entityId: result?.assetId || 'unknown',
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { title, sensitivityLevel, retentionClass, sizeBytes: file.size, correlationId },
+    });
+
     return NextResponse.json(result, { status: 201 });
   } catch (error: unknown) {
-    console.error('[POST_DOCUMENT_ERROR]', error);
     const err = error as Error;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'POST_DOCUMENT_ERROR',
+      entityType: 'DOCUMENT',
+      entityId: 'unknown',
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message },
+    });
+    console.error('[POST_DOCUMENT_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

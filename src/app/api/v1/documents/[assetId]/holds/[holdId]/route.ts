@@ -1,15 +1,15 @@
 /**
- * @purpose Gestiona la eliminación de una suspensión legal para un activo documental específico.
+ * @purpose Gestiona la eliminación de un hold legal para un activo documental específico.
  * @purpose_en Handles the deletion of a legal hold for a specific document asset.
  * @refactorable false
  * @classification Business Service
  * @complexity Low
- * @fingerprint exports:2,imports:4,sig:1f98sq9
- * @lastUpdated 2026-06-23T23:03:21.716Z
+ * @fingerprint exports:2,imports:4,sig:rbr6f0
+ * @lastUpdated 2026-06-24T10:30:41.441Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';
 import { assertAccess } from '@/lib/abac';
 
@@ -35,10 +35,30 @@ export async function DELETE(
       user.email || 'system'
     );
 
+    await logger.audit({
+      tenantId: user.tenantId,
+      action: 'HOLD_RELEASED',
+      entityType: 'LEGAL_HOLD',
+      entityId: holdId,
+      userId: user.email || 'system',
+      userEmail: user.email || 'system@abd.com',
+      changedFields: { assetId },
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    console.error('[DELETE_HOLD_ERROR]', error);
     const err = error as Error;
+    const { assetId, holdId } = await params;
+    await logger.audit({
+      tenantId: 'unknown',
+      action: 'DELETE_HOLD_ERROR',
+      entityType: 'LEGAL_HOLD',
+      entityId: holdId,
+      userId: 'system',
+      userEmail: 'system@abd.com',
+      changedFields: { error: err.message, assetId, holdId },
+    });
+    console.error('[DELETE_HOLD_ERROR]', error);
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
