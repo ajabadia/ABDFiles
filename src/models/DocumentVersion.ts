@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona un esquema de mongoose y modelo para versiones de documentos, incluyendo propiedades como versionId, tenantId, assetId y más.
+ * @purpose_en Defines a Mongoose schema and model for document versions, including properties like versionId, tenantId, assetId, and more.
+ * @refactorable false
+ * @classification Type Definition
+ * @complexity Low
+ * @fingerprint exports:1,imports:2,sig:lzimbi
+ * @lastUpdated 2026-06-21T14:53:27.931Z
+ */
+
 import mongoose, { Schema, Document } from 'mongoose';
 import { getTenantModel } from '@ajabadia/satellite-sdk';
 

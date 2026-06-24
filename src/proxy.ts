@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona autenticación y internacionalización para rutas en la aplicación ABDFiles utilizando middleware de Next.js.
+ * @purpose_en Manages authentication and internationalization for routes in the ABDFiles application using Next.js middleware.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:2,imports:4,sig:3ab0ef
+ * @lastUpdated 2026-06-23T23:04:00.171Z
+ */
+
 import { withIndustrialAuth } from '@ajabadia/satellite-sdk';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';

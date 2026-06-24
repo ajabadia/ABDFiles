@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona el solicitud GET para obtener una lista de inquilinos, asegurando que solo los usuarios SUPER_ADMIN puedan acceder a ella.
+ * @purpose_en Handles the GET request to retrieve a list of tenants, ensuring only SUPER_ADMIN users can access it.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:2,imports:3,sig:1q3eeak
+ * @lastUpdated 2026-06-21T14:28:06.709Z
+ */
+
 import { NextResponse } from 'next/server';
 import { ensureIndustrialAccess, getGlobalModel } from '@ajabadia/satellite-sdk';
 import mongoose from 'mongoose';

@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona operaciones CRUD para conectores de almacenamiento.
+ * @purpose_en Manages CRUD operations for storage connectors.
+ * @refactorable true (contains multiple HTTP methods and business logic)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:3,imports:4,sig:gazsym
+ * @lastUpdated 2026-06-23T23:02:59.139Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
 import { ConnectorService } from '@/services/connector-service';

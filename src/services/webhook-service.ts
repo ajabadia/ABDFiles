@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona las notificaciones de webhook firmadas para suscriptores externos.
+ * @purpose_en Manages the emission of signed webhook notifications to external subscribers.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:1,imports:1,sig:g7qv9o
+ * @lastUpdated 2026-06-23T23:04:35.458Z
+ */
+
 import crypto from 'crypto';
 
 /**

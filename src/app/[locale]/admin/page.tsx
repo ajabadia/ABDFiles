@@ -1,10 +1,19 @@
+/**
+ * @purpose Gestiona el portal de análisis administrativo central con una vista de dashboard, maneja traducciones, autenticación del usuario y componentes de interfaz.
+ * @purpose_en Renders the central admin analytics portal page with a dashboard, handling translations, user authentication, and UI components.
+ * @refactorable false
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:9,sig:mbqihe
+ * @lastUpdated 2026-06-23T23:03:40.228Z
+ */
+
 import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
 import { LayoutDashboard, ArrowLeft } from 'lucide-react';
 import { AdminPageHeader } from '@ajabadia/styles';
 import { GlobalFooter } from '@ajabadia/ecosystem-widgets';
-import { getDashboardMetrics } from '@/actions/dashboard-actions';
 import DashboardClient from '@/components/admin/DashboardClient';
 import DashboardSkeleton from '@/components/admin/DashboardSkeleton';
 import Link from 'next/link';

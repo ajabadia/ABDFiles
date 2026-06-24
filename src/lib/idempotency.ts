@@ -1,3 +1,13 @@
+/**
+ * @purpose Valida y almacena respuestas utilizando el encabezado de clave Idempotency.
+ * @purpose_en Validates and caches responses using the Idempotency-Key header.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:2,imports:2,sig:1cn2vpc
+ * @lastUpdated 2026-06-23T23:03:55.842Z
+ */
+
 import { NextResponse } from 'next/server';
 import IdempotencyKey from '@/models/IdempotencyKey';
 

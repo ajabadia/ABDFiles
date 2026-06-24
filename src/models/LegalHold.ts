@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona un esquema de Mongoose y modelo para LegalHold, que representa los retenciones legales sobre activos dentro de un inquilino.
+ * @purpose_en Defines a Mongoose schema and model for LegalHold, which represents legal holds on assets within a tenant.
+ * @refactorable false
+ * @classification Type Definition
+ * @complexity Low
+ * @fingerprint exports:1,imports:2,sig:1w0uaju
+ * @lastUpdated 2026-06-21T14:53:40.680Z
+ */
+
 import mongoose, { Schema, Document } from 'mongoose';
 import { getTenantModel } from '@ajabadia/satellite-sdk';
 

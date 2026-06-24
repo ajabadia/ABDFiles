@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona rutas de autenticación para manejo de sesiones, salida y llamada federada de manera dinámica.
+ * @purpose_en Manages authentication routes for session handling, logout, and federated callback dynamically.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:2,imports:2,sig:oaok1o
+ * @lastUpdated 2026-06-23T23:02:46.057Z
+ */
+
 import { createAuthRouteHandler } from '@ajabadia/satellite-sdk';
 import { NextRequest } from 'next/server';
 

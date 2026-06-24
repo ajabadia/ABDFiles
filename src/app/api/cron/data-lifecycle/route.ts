@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona solicitudes GET y POST para procesar documentos vencidos y realizar purgas físicas mediante una tarea cronica.
+ * @purpose_en Manages GET and POST requests to process expired documents and perform physical purges using a cron job.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:3,imports:2,sig:1jhxpqt
+ * @lastUpdated 2026-06-23T23:02:50.751Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { DocumentService } from '@/services/document-service';
 

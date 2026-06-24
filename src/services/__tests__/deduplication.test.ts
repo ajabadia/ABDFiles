@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setupTestEnvironment } from '../../models/__tests__/test-setup';
 import Document from '../../models/Document';
@@ -76,7 +77,8 @@ describe('ABDFiles Deduplication Isolation', () => {
     const newStorageRef = 'cloudinary://tenants/tenant-alpha/abdfiles/new-ref';
 
     // Mock DocumentVersion.findOne to return null, because we filter by currentTenantId
-    const findOneSpy = vi.spyOn(DocumentVersion, 'findOne').mockImplementation(async (query: any) => {
+    const findOneSpy = vi.spyOn(DocumentVersion, 'findOne') as any;
+    findOneSpy.mockImplementation(async (query: any) => {
       // If the query is for the current tenant, return null (no match)
       if (query.tenantId === currentTenantId) {
         return null;
@@ -87,7 +89,7 @@ describe('ABDFiles Deduplication Isolation', () => {
           tenantId: otherTenantId,
           hash,
           storageRef: otherStorageRef,
-        } as any;
+        };
       }
       return null;
     });

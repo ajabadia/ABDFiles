@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Renderiza una pestaña de comandos con opciones de navegación y configuración para el análisis del aplicativo.
+ * @purpose_en Renders a command palette with various navigation and settings options for the Analytics section of the application.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Low
+ * @fingerprint exports:1,imports:5,sig:ejpyli
+ * @lastUpdated 2026-06-21T14:34:00.805Z
+ */
+
 import React from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useLocale } from 'next-intl';

@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Renders a arrastre y soltar zona de subida de archivos, gestiona subidas de archivos y muestra progreso de subida y mensajes.
+ * @purpose_en Renders a drag-and-drop upload zone for files, handles file uploads, and displays upload progress and messages.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:3,sig:sb36d4
+ * @lastUpdated 2026-06-21T14:52:16.104Z
+ */
+
 import React, { useState, useRef } from 'react';
 import { UploadCloud, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';

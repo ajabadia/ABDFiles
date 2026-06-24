@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona operaciones de documentos, como listar y subir documentos para el inquilino actual.
+ * @purpose_en Manages document operations such as listing and uploading documents for the current tenant.
+ * @refactorable true (contains business logic and data handling)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:3,imports:5,sig:cesab4
+ * @lastUpdated 2026-06-23T23:03:07.791Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';

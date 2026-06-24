@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Renderiza un panel de control para gestionar activos de documentos, incluyendo recuperar, mostrar y eliminar documentos.
+ * @purpose_en Renders a dashboard for managing document assets, including fetching, displaying, and deleting documents.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:5,sig:2whgug
+ * @lastUpdated 2026-06-21T14:33:25.885Z
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Eye, FileText, RefreshCw, Trash2, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';

@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona un esquema y modelo de Mongoose para `DocumentEvent`, que representa eventos relacionados con documentos en el sistema.
+ * @purpose_en Defines a Mongoose schema and model for `DocumentEvent`, which represents events related to documents in the system.
+ * @refactorable false
+ * @classification Type Definition
+ * @complexity Low
+ * @fingerprint exports:1,imports:2,sig:kt3jcl
+ * @lastUpdated 2026-06-21T14:53:22.099Z
+ */
+
 import mongoose, { Schema, Document } from 'mongoose';
 import { getTenantModel } from '@ajabadia/satellite-sdk';
 

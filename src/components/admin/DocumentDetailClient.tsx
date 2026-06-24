@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Renderiza una vista detallada de un activo de documento, incluyendo sus versiones y eventos, con opciones para refrescar los datos.
+ * @purpose_en Renders a detailed view of a document asset, including its versions and events, with options to refresh data.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:3,sig:c7boio
+ * @lastUpdated 2026-06-21T14:33:32.672Z
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { CheckCircle, AlertTriangle, Trash2, Shield, Lock, Unlock, UploadCloud, RefreshCw } from 'lucide-react';

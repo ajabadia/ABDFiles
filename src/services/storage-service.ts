@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona interacciones con proveedores de almacenamiento físico dinámicamente, incluyendo subir archivos, generar URLs firmadas y eliminar archivos.
+ * @purpose_en Manages interactions with physical storage providers dynamically, including uploading files, generating signed URLs, and deleting files.
+ * @refactorable true (contains multiple functions related to different storage operations)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:2,imports:3,sig:2aisaz
+ * @lastUpdated 2026-06-23T23:04:31.716Z
+ */
+
 import StorageConnector from '@/models/StorageConnector';
 import { StorageProviderRegistry } from './storage/storage-providers';
 import crypto from 'crypto';

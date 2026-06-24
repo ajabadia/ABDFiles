@@ -1,8 +1,24 @@
+/**
+ * @purpose Renderiza el layout raíz para la aplicación ABDFiles, incluyendo gestión de ubicación y sesión, proveedor de temas y estilos de marca.
+ * @purpose_en Renders the root layout for the ABDFiles application, including locale and session management, theme provider, and branding styles.
+ * @refactorable false
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:2,imports:7,sig:l5mqsl
+ * @lastUpdated 2026-06-21T14:32:58.216Z
+ */
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getLocale } from "next-intl/server";
-import { getIndustrialSession, BrandingStyles } from "@ajabadia/satellite-sdk";
+import { getIndustrialSession, BrandingStyles, configureLogger } from "@ajabadia/satellite-sdk";
 import { SessionProvider } from "@ajabadia/satellite-sdk/client";
+
+configureLogger({
+  endpoint: process.env.LOGS_SERVICE_URL || 'http://localhost:5003/api/logs',
+  token: process.env.LOGS_SECRET_TOKEN,
+  appId: 'ABDFiles',
+});
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 import "./globals.css";

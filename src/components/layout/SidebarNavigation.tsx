@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Renderiza un componente de navegación lateral con enlaces y maneja cambios de sesión, idioma y salida.
+ * @purpose_en Renders a sidebar navigation component with links and handles user session, locale changes, and logout functionality.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:5,sig:bqh09i
+ * @lastUpdated 2026-06-21T14:34:04.080Z
+ */
+
 import React from 'react';
 import { Home, Terminal, ShieldCheck } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';

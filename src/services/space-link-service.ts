@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona el enlace y desconexión de activos documentales a espacios lógicos, incluyendo la creación de eventos de auditoría para estas acciones.
+ * @purpose_en Manages the linking and unlinking of document assets to logical spaces, including creating audit events for these actions.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:1,imports:5,sig:1q5v2gf
+ * @lastUpdated 2026-06-23T23:04:26.442Z
+ */
+
 import crypto from 'crypto';
 import Document, { TDocument } from '@/models/Document';
 import DocumentVersion from '@/models/DocumentVersion';

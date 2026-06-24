@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona la eliminación de una suspensión legal para un activo documental específico.
+ * @purpose_en Handles the deletion of a legal hold for a specific document asset.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:2,imports:4,sig:1f98sq9
+ * @lastUpdated 2026-06-23T23:03:21.716Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';

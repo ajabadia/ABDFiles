@@ -1,3 +1,13 @@
+/**
+ * @purpose Renderiza la página principal del aplicativo ABDFiles, incluyendo una cabecera, enlaces de navegación y pie de página.
+ * @purpose_en Renders the home page of the ABDFiles application, including a header, navigation links, and footer.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Low
+ * @fingerprint exports:1,imports:5,sig:rrxtte
+ * @lastUpdated 2026-06-21T14:33:21.706Z
+ */
+
 import { getTranslations } from 'next-intl/server';
 import { ArrowRight, HardDrive, History, FileText } from 'lucide-react';
 import { HeroHeader } from '@ajabadia/styles';

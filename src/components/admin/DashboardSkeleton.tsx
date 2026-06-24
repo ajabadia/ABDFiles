@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Renderiza una notificacion emergente para el panel administrativo del proyecto ABDSuite.
+ * @purpose_en Renders a loading skeleton for the admin dashboard in the ABDSuite project.
+ * @refactorable false
+ * @classification UI Component
+ * @complexity Low
+ * @fingerprint exports:1,imports:2,sig:19khq6n
+ * @lastUpdated 2026-06-21T14:33:28.540Z
+ */
+
 import React from 'react';
 import { Layers } from 'lucide-react';
 

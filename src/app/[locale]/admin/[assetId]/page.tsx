@@ -1,3 +1,13 @@
+/**
+ * @purpose Renderiza una página detallada para un activo en el panel administrativo, incluyendo navegación, encabezado y detalles del documento.
+ * @purpose_en Renders a detailed page for an asset in the admin console, including navigation, header, and document details.
+ * @refactorable false
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:2,imports:8,sig:711j4g
+ * @lastUpdated 2026-06-21T14:33:08.740Z
+ */
+
 import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';

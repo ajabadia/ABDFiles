@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona el entorno de prueba para la aplicación ABDFiles, simulando dependencias y configurando conexiones con MongoDB.
+ * @purpose_en Sets up the test environment for the ABDFiles application, mocking dependencies and configuring MongoDB connections.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification Helper Utility
+ * @complexity Low
+ * @fingerprint exports:2,imports:3,sig:r8pdm6
+ * @lastUpdated 2026-06-21T14:53:54.681Z
+ */
+
 import { vi, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { AsyncLocalStorage } from 'async_hooks';

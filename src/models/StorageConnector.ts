@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona un esquema de Mongoose y modelo para almacenamiento de conectores, incluyendo campos como connectorId, tenantId, tipo de proveedor, estado, referencia a credenciales, escopos permitidos, política de retención, modo de auditoria, fecha de creación y fecha de actualización.
+ * @purpose_en Defines a Mongoose schema and model for storage connectors, including fields like connectorId, tenantId, providerType, status, credentialsRef, allowedScopes, retentionPolicy, auditMode, createdAt, and updatedAt.
+ * @refactorable false
+ * @classification Type Definition
+ * @complexity Low
+ * @fingerprint exports:1,imports:2,sig:1hgdivn
+ * @lastUpdated 2026-06-21T14:53:50.144Z
+ */
+
 import mongoose, { Schema, Document } from 'mongoose';
 import { getTenantModel } from '@ajabadia/satellite-sdk';
 

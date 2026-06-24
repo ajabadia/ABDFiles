@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ConnectorService } from '../connector-service';
 import StorageConnector from '@/models/StorageConnector';
@@ -98,12 +99,12 @@ describe('ConnectorService', () => {
 
   describe('testConnection', () => {
     it('should return success when operations complete successfully', async () => {
-      vi.mocked(StorageConnector.findOne).mockResolvedValue({
+      (StorageConnector.findOne as any).mockResolvedValue({
         connectorId: 'conn-1',
         tenantId: 'tenant-1',
         providerType: 'cloudinary',
         credentialsRef: JSON.stringify({ cloudName: 'test-cloud' })
-      } as unknown as ReturnType<typeof vi.mocked>);
+      });
 
       const result = await ConnectorService.testConnection('tenant-1', 'conn-1');
       expect(result.success).toBe(true);
@@ -112,12 +113,12 @@ describe('ConnectorService', () => {
     });
 
     it('should return failure when operations throw error', async () => {
-      vi.mocked(StorageConnector.findOne).mockResolvedValue({
+      (StorageConnector.findOne as any).mockResolvedValue({
         connectorId: 'conn-1',
         tenantId: 'tenant-1',
         providerType: 'cloudinary',
         credentialsRef: JSON.stringify({ cloudName: 'test-cloud' })
-      } as unknown as ReturnType<typeof vi.mocked>);
+      });
 
       vi.mocked(StorageProviderRegistry.cloudinary.uploadFile).mockRejectedValueOnce(
         new Error('Upload refused')

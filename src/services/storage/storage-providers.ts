@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona operaciones de almacenamiento de archivos utilizando proveedores como Cloudinary, almacenamiento compatible con S3, Google Drive y OneDrive.
+ * @purpose_en Manages file storage operations using various providers such as Cloudinary, S3-compatible storage, Google Drive, and OneDrive.
+ * @refactorable true (contains multiple provider implementations)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:6,imports:6,sig:rk112o
+ * @lastUpdated 2026-06-21T16:07:34.496Z
+ */
+
 import { v2 as cloudinary } from 'cloudinary';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl as getS3SignedUrl } from '@aws-sdk/s3-request-presigner';

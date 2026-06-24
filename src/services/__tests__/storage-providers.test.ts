@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setupTestEnvironment } from '../../models/__tests__/test-setup';
-import StorageConnector, { TStorageConnector } from '../../models/StorageConnector';
+import StorageConnector from '../../models/StorageConnector';
 import { StorageService } from '../storage-service';
 import { StorageProviderRegistry } from '../storage/storage-providers';
 
@@ -48,7 +49,7 @@ describe('Polymorphic Storage Providers', () => {
         })
       };
 
-      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as unknown as TStorageConnector);
+      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as any);
       const s3UploadSpy = vi.spyOn(StorageProviderRegistry.s3Compatible, 'uploadFile');
 
       const buffer = Buffer.from('s3 payload');
@@ -66,7 +67,7 @@ describe('Polymorphic Storage Providers', () => {
         credentialsRef: 'oauth-token-ref'
       };
 
-      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as unknown as TStorageConnector);
+      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as any);
       const gdriveUploadSpy = vi.spyOn(StorageProviderRegistry.googleDrive, 'uploadFile');
 
       const buffer = Buffer.from('gdrive file');
@@ -85,7 +86,7 @@ describe('Polymorphic Storage Providers', () => {
         credentialsRef: 'onedrive-auth-ref'
       };
 
-      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as unknown as TStorageConnector);
+      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as any);
       const onedriveUploadSpy = vi.spyOn(StorageProviderRegistry.oneDrive, 'uploadFile');
 
       const buffer = Buffer.from('onedrive file');
@@ -112,7 +113,7 @@ describe('Polymorphic Storage Providers', () => {
         })
       };
 
-      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as unknown as TStorageConnector);
+      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as any);
       const s3UrlSpy = vi.spyOn(StorageProviderRegistry.s3Compatible, 'getSignedUrl').mockResolvedValue('http://signed-s3-url');
 
       const url = await StorageService.getSignedUrl('my-key-ref', 'text/plain', 'tenant-test-s3');
@@ -128,7 +129,7 @@ describe('Polymorphic Storage Providers', () => {
         credentialsRef: 'onedrive-auth-ref'
       };
 
-      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as unknown as TStorageConnector);
+      vi.spyOn(StorageConnector, 'findOne').mockResolvedValue(mockConnector as any);
       const onedriveDeleteSpy = vi.spyOn(StorageProviderRegistry.oneDrive, 'deleteFile');
 
       await StorageService.deleteFile('my-key-ref', 'text/plain', 'tenant-test-onedrive');

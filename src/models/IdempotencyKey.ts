@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona un esquema de Mongoose y modelo para manejar claves de idempotencia, que se utilizan para asegurar que las solicitudes API pueden ser reintentadas de manera segura sin causar acciones duplicadas.
+ * @purpose_en Defines a Mongoose schema and model for managing idempotency keys, which are used to ensure that API requests can be safely retried without causing duplicate actions.
+ * @refactorable false
+ * @classification Type Definition
+ * @complexity Low
+ * @fingerprint exports:1,imports:2,sig:5ubney
+ * @lastUpdated 2026-06-21T14:53:35.345Z
+ */
+
 import mongoose, { Schema, Document } from 'mongoose';
 import { getTenantModel } from '@ajabadia/satellite-sdk';
 

@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona la solicitud PATCH para actualizar metadata de un activo de documento.
+ * @purpose_en Handles the PATCH request to update metadata for a document asset.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:2,imports:4,sig:9tz5cf
+ * @lastUpdated 2026-06-23T23:03:25.346Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';

@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona activos documentales y historias de versiones, incluyendo subir nuevos documentos, actualizar versiones existentes, aplicar retenciones legales y liberarlos.
+ * @purpose_en Manages document assets and version histories, including uploading new documents, updating existing versions, applying legal holds, and releasing them.
+ * @refactorable true (contains multiple business logic functions)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:3,imports:11,sig:1uwkpu8
+ * @lastUpdated 2026-06-23T23:04:11.840Z
+ */
+
 import crypto from 'crypto';
 import Document, { TDocument } from '@/models/Document';
 import DocumentVersion, { TDocumentVersion } from '@/models/DocumentVersion';

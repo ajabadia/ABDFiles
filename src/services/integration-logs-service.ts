@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona la replicación de eventos de auditoría de documentos a un servicio ABDLogs central.
+ * @purpose_en Manages the replication of document audit events to a central ABDLogs service.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:1,imports:1,sig:auoc7q
+ * @lastUpdated 2026-06-23T23:04:15.652Z
+ */
+
 import { logger } from '@ajabadia/satellite-sdk';
 
 /**

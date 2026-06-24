@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona el recuperar y crear versiones de documentos para un activo específico.
+ * @purpose_en Manages the retrieval and creation of document versions for a specific asset.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:3,imports:5,sig:1ojvt4y
+ * @lastUpdated 2026-06-23T23:03:34.801Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
 import { DocumentService } from '@/services/document-service';

@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona conectores de almacenamiento para inquilinos proporcionando métodos para validar credenciales, listar, recuperar, crear y probar conexiones.
+ * @purpose_en Manages storage connectors for tenants by providing methods to validate credentials, list, retrieve, create, and test connections.
+ * @refactorable true (contains multiple responsibilities such as validation, listing, creation, and testing)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:1,imports:3,sig:r3g0rh
+ * @lastUpdated 2026-06-23T23:04:05.741Z
+ */
+
 import StorageConnector, { TStorageConnector } from '@/models/StorageConnector';
 import { StorageProviderRegistry } from './storage/storage-providers';
 import crypto from 'crypto';

@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona y libera retenciones legales sobre activos documentales, asegurando cumplimiento con políticas de retención.
+ * @purpose_en Manages the application of and release of legal holds on document assets, ensuring compliance with retention policies.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:1,imports:5,sig:157gkta
+ * @lastUpdated 2026-06-23T23:04:20.401Z
+ */
+
 import crypto from 'crypto';
 import Document, { TDocument } from '@/models/Document';
 import DocumentVersion from '@/models/DocumentVersion';

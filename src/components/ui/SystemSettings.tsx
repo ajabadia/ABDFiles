@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Gestiona un componente UI de configuración del sistema que permite a los usuarios cambiar la ubicación, el tema y el estado de autenticación.
+ * @purpose_en Renders a system settings UI component that allows users to change locale, theme, and authentication status.
+ * @refactorable false
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:4,sig:15m341n
+ * @lastUpdated 2026-06-21T14:52:21.611Z
+ */
+
 import { useTheme } from 'next-themes';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/routing';
