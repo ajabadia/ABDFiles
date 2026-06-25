@@ -1,15 +1,15 @@
 /**
- * @purpose Gestiona un esquema de Mongoose y modelo para documentos, incluyendo campos para detalles de activos, información de inquilinos, versionado, almacenamiento, sensibilidad y gestión del ciclo de vida.
+ * @purpose Gestiona un esquema de mongoose y modelo para documentos, incluyendo campos para detalles de activos, información de inquilinos, versionado, almacenamiento, sensibilidad y gestión del ciclo de vida.
  * @purpose_en Defines a Mongoose schema and model for documents, including fields for asset details, tenant information, versioning, storage, sensitivity, and lifecycle management.
  * @refactorable false
  * @classification Type Definition
  * @complexity Low
  * @fingerprint exports:1,imports:2,sig:xf9k1x
- * @lastUpdated 2026-06-21T14:53:17.117Z
+ * @lastUpdated 2026-06-25T10:21:20.766Z
  */
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { getTenantModel } from '@ajabadia/satellite-sdk';
+import { getTenantModel } from '@ajabadia/satellite-sdk/db';
 
 export type TDocument = Document & {
   assetId: string;

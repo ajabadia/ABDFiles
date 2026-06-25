@@ -1,15 +1,16 @@
 /**
- * @purpose Gestiona GET y DELETE solicitudes para activos de documentos, asegurando el control de acceso y recuperando o eliminando metadata de documento.
+ * @purpose Gestiona solicitudes GET y DELETE para activos de documentos, asegurando el control de acceso y recuperando o eliminando metadata de documento.
  * @purpose_en Manages GET and DELETE requests for document assets, ensuring access control and retrieving or deleting document metadata.
  * @refactorable false
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:4,sig:1gsom3a
- * @lastUpdated 2026-06-24T10:30:52.044Z
+ * @fingerprint exports:3,imports:5,sig:17dlyg3
+ * @lastUpdated 2026-06-25T10:19:49.800Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { DocumentService } from '@/services/document-service';
 import { assertAccess } from '@/lib/abac';
 

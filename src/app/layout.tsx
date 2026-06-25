@@ -1,17 +1,19 @@
 /**
- * @purpose Gestiona el layout raíz para la aplicación ABDFiles, incluyendo gestión de idioma y sesión, proveedor de temas y estilos de marca.
+ * @purpose Renderiza el layout raíz para la aplicación ABDFiles, incluyendo gestión de ubicación y sesión, proveedor de temas y estilos de marca.
  * @purpose_en Renders the root layout for the ABDFiles application, including locale and session management, theme provider, and branding styles.
  * @refactorable false
  * @classification UI Component
  * @complexity Medium
- * @fingerprint exports:2,imports:7,sig:pzgvd9
- * @lastUpdated 2026-06-24T10:31:02.919Z
+ * @fingerprint exports:2,imports:9,sig:1ifvdbb
+ * @lastUpdated 2026-06-25T10:20:09.341Z
  */
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getLocale } from "next-intl/server";
-import { getIndustrialSession, BrandingStyles, configureLogger } from "@ajabadia/satellite-sdk";
+import { getIndustrialSession } from '@ajabadia/satellite-sdk/auth-middleware';
+import { BrandingStyles } from '@ajabadia/satellite-sdk/styles';
+import { configureLogger } from '@ajabadia/satellite-sdk/logger';
 import { SessionProvider } from "@ajabadia/satellite-sdk/client";
 
 configureLogger({

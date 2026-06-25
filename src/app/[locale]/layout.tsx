@@ -1,11 +1,11 @@
 /**
- * @purpose Renderiza el layout para una página localizada específicamente en la aplicación ABDFiles, incluyendo navegación, marca y componentes de análisis.
+ * @purpose Renderiza el layout para una página localizada específica en la aplicación ABDFiles, incluyendo navegación, marca y componentes de análisis.
  * @purpose_en Renders the layout for a locale-specific page in the ABDFiles application, including navigation, branding, and analytics components.
  * @refactorable false
  * @classification UI Component
  * @complexity Medium
  * @fingerprint exports:1,imports:11,sig:1c5rshr
- * @lastUpdated 2026-06-21T14:33:12.752Z
+ * @lastUpdated 2026-06-25T10:20:31.882Z
  */
 
 import { NextIntlClientProvider } from "next-intl";
@@ -18,7 +18,7 @@ import { SystemSettings } from "@/components/ui/SystemSettings";
 import { TenantSelector } from "@/components/ui/TenantSelector";
 import { AnalyticsCommandPalette } from "@/components/layout/AnalyticsCommandPalette";
 
-import { getIndustrialSession } from '@ajabadia/satellite-sdk';
+import { getIndustrialSession } from '@ajabadia/satellite-sdk/auth-middleware';
 import { resolveTenantBranding } from "@ajabadia/satellite-sdk";
 
 export default async function LocaleLayout({

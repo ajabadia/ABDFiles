@@ -4,12 +4,13 @@
  * @refactorable false
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:2,imports:4,sig:l6ct11
- * @lastUpdated 2026-06-24T10:30:30.647Z
+ * @fingerprint exports:2,imports:5,sig:203oki
+ * @lastUpdated 2026-06-25T10:19:22.288Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import DocumentEvent from '@/models/DocumentEvent';
 import { assertAccess } from '@/lib/abac';
 

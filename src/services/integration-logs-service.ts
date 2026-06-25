@@ -5,10 +5,10 @@
  * @classification Business Service
  * @complexity Low
  * @fingerprint exports:1,imports:1,sig:auoc7q
- * @lastUpdated 2026-06-23T23:04:15.652Z
+ * @lastUpdated 2026-06-25T10:22:48.007Z
  */
 
-import { logger } from '@ajabadia/satellite-sdk';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 
 /**
  * Service to replicate document audit events to central ABDLogs.

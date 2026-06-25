@@ -5,11 +5,11 @@
  * @classification Type Definition
  * @complexity Low
  * @fingerprint exports:1,imports:2,sig:1omvah9
- * @lastUpdated 2026-06-21T14:53:09.963Z
+ * @lastUpdated 2026-06-25T10:21:08.585Z
  */
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { getTenantModel } from '@ajabadia/satellite-sdk';
+import { getTenantModel } from '@ajabadia/satellite-sdk/db';
 
 export type TDeletionJob = Document & {
   jobId: string;

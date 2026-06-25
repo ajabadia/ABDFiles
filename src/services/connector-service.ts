@@ -5,10 +5,10 @@
  * @classification Business Service
  * @complexity Medium
  * @fingerprint exports:1,imports:4,sig:zmpbpt
- * @lastUpdated 2026-06-24T10:31:10.509Z
+ * @lastUpdated 2026-06-25T10:22:41.347Z
  */
 
-import { logger } from '@ajabadia/satellite-sdk';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import StorageConnector, { TStorageConnector } from '@/models/StorageConnector';
 import { StorageProviderRegistry } from './storage/storage-providers';
 import crypto from 'crypto';

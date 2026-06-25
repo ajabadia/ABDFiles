@@ -1,15 +1,16 @@
 /**
- * @purpose Gestiona conectores de almacenamiento para inquilinos mediante el manejo de solicitudes GET y POST para listar y crear conectores.
+ * @purpose Gestiona conectores de almacenamiento para los inquilinos, manejando solicitudes GET y POST para listar y crear conectores.
  * @purpose_en Manages storage connectors for tenants by handling GET and POST requests to list and create connectors.
  * @refactorable true (contains too many state variables and UI parts)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:5,sig:1us5hqj
- * @lastUpdated 2026-06-24T10:30:11.313Z
+ * @fingerprint exports:3,imports:6,sig:1e3tdyw
+ * @lastUpdated 2026-06-25T10:18:54.272Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { ConnectorService } from '@/services/connector-service';
 import { assertAccess } from '@/lib/abac';
 import { getCachedResponse, saveResponse } from '@/lib/idempotency';

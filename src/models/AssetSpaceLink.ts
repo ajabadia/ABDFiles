@@ -5,11 +5,11 @@
  * @classification Type Definition
  * @complexity Low
  * @fingerprint exports:1,imports:2,sig:my0ofa
- * @lastUpdated 2026-06-21T14:53:04.908Z
+ * @lastUpdated 2026-06-25T10:21:00.466Z
  */
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { getTenantModel } from '@ajabadia/satellite-sdk';
+import { getTenantModel } from '@ajabadia/satellite-sdk/db';
 
 export type TAssetSpaceLink = Document & {
   linkId: string;

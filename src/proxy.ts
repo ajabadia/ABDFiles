@@ -5,10 +5,10 @@
  * @classification Business Service
  * @complexity Low
  * @fingerprint exports:2,imports:4,sig:3ab0ef
- * @lastUpdated 2026-06-23T23:04:00.171Z
+ * @lastUpdated 2026-06-25T10:22:32.156Z
  */
 
-import { withIndustrialAuth } from '@ajabadia/satellite-sdk';
+import { withIndustrialAuth } from '@ajabadia/satellite-sdk/auth-middleware';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';

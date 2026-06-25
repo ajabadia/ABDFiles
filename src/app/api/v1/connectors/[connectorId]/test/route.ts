@@ -1,15 +1,16 @@
 /**
- * @purpose Gestiona el solicitud POST para ejecutar un test físico vivo contra un proveedor de conectores.
+ * @purpose Gestiona el solicitud POST para ejecutar una prueba física en vivo contra un proveedor de conectores.
  * @purpose_en Handles the POST request to execute a live physical test against a connector provider.
  * @refactorable false
  * @classification Business Service
  * @complexity Low
- * @fingerprint exports:1,imports:4,sig:1t7u7mm
- * @lastUpdated 2026-06-24T10:30:19.685Z
+ * @fingerprint exports:1,imports:5,sig:13ghhfv
+ * @lastUpdated 2026-06-25T10:19:08.164Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { ConnectorService } from '@/services/connector-service';
 import { assertAccess } from '@/lib/abac';
 

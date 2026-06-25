@@ -5,11 +5,11 @@
  * @classification Type Definition
  * @complexity Low
  * @fingerprint exports:1,imports:2,sig:1w0uaju
- * @lastUpdated 2026-06-21T14:53:40.680Z
+ * @lastUpdated 2026-06-25T10:22:02.938Z
  */
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { getTenantModel } from '@ajabadia/satellite-sdk';
+import { getTenantModel } from '@ajabadia/satellite-sdk/db';
 
 export type TLegalHold = Document & {
   holdId: string;

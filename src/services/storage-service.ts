@@ -4,8 +4,8 @@
  * @refactorable true (contains multiple functions related to different storage operations)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:2,imports:3,sig:2aisaz
- * @lastUpdated 2026-06-23T23:04:31.716Z
+ * @fingerprint exports:2,imports:3,sig:6slhu0
+ * @lastUpdated 2026-06-25T10:22:56.085Z
  */
 
 import StorageConnector from '@/models/StorageConnector';
@@ -41,7 +41,7 @@ export const StorageService = {
    */
   async uploadFile(buffer: Buffer, tenantId: string, mimeType: string): Promise<TUploadResult> {
     const connector = await StorageConnector.findOne({ tenantId, status: 'active' });
-    const providerType = connector?.providerType || 'cloudinary';
+    const providerType = connector?.providerType || process.env.DEFAULT_STORAGE_PROVIDER || 'cloudinary';
     const config = this.getConnectorConfig(connector?.credentialsRef);
 
     const provider = StorageProviderRegistry[providerType];
@@ -57,7 +57,7 @@ export const StorageService = {
    * Generates a temporary signed URL to safely consume/download the file.
    */
   async getSignedUrl(storageRef: string, mimeType: string, tenantId?: string): Promise<string> {
-    let providerType = 'cloudinary';
+    let providerType = process.env.DEFAULT_STORAGE_PROVIDER || 'cloudinary';
     let config: Record<string, unknown> = {};
 
     if (tenantId) {
@@ -80,7 +80,7 @@ export const StorageService = {
    * Deletes a file physically from the corresponding storage provider.
    */
   async deleteFile(storageRef: string, mimeType: string, tenantId?: string): Promise<void> {
-    let providerType = 'cloudinary';
+    let providerType = process.env.DEFAULT_STORAGE_PROVIDER || 'cloudinary';
     let config: Record<string, unknown> = {};
 
     if (tenantId) {

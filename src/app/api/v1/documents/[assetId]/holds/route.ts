@@ -1,15 +1,16 @@
 /**
- * @purpose Gestiona holds legales para activos de documentos mediante el manejo de solicitudes GET y POST para listar y aplicar los holds.
+ * @purpose Gestiona holds legales para activos documentales mediante manejo de solicitudes GET y POST para listar y aplicar holds.
  * @purpose_en Manages legal holds for document assets by handling GET and POST requests to list and apply holds.
  * @refactorable true (contains too many state variables and UI parts)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:5,sig:133s1jy
- * @lastUpdated 2026-06-24T10:30:36.918Z
+ * @fingerprint exports:3,imports:6,sig:1mmp8mj
+ * @lastUpdated 2026-06-25T10:19:29.290Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { DocumentService } from '@/services/document-service';
 import { assertAccess } from '@/lib/abac';
 import LegalHold from '@/models/LegalHold';

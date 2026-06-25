@@ -4,12 +4,13 @@
  * @refactorable true (contains business logic and data handling)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:5,sig:cqmci8
- * @lastUpdated 2026-06-24T10:30:24.576Z
+ * @fingerprint exports:3,imports:6,sig:15ad58d
+ * @lastUpdated 2026-06-25T10:19:14.740Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { DocumentService } from '@/services/document-service';
 import { getCachedResponse, saveResponse } from '@/lib/idempotency';
 import { assertAccess } from '@/lib/abac';

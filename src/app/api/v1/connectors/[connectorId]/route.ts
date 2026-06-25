@@ -4,12 +4,13 @@
  * @refactorable true (contains multiple HTTP methods and business logic)
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:3,imports:4,sig:4ykvty
- * @lastUpdated 2026-06-24T10:30:14.998Z
+ * @fingerprint exports:3,imports:5,sig:6jjhub
+ * @lastUpdated 2026-06-25T10:19:00.202Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureIndustrialAccess, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { ConnectorService } from '@/services/connector-service';
 import { assertAccess } from '@/lib/abac';
 

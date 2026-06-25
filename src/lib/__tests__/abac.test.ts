@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { assertAccess } from '../abac';
-import * as satelliteSdk from '@ajabadia/satellite-sdk';
+import * as satelliteSdk from '@ajabadia/satellite-sdk/auth-middleware';
 
-vi.mock('@ajabadia/satellite-sdk', () => {
+vi.mock('@ajabadia/satellite-sdk/auth-middleware', () => {
   class InsufficientPrivilegesError extends Error {
     constructor(message: string) {
       super(message);

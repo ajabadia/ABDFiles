@@ -1,15 +1,15 @@
 /**
- * @purpose Gestiona solicitudes GET y POST para procesar documentos vencidos y realizar purgas físicas mediante una tarea cronica.
+ * @purpose Gestiona solicitudes GET y POST para procesar documentos vencidos y realizar purgas físicas mediante una tarea cronológica.
  * @purpose_en Manages GET and POST requests to process expired documents and perform physical purges using a cron job.
  * @refactorable false
  * @classification Business Service
  * @complexity Low
  * @fingerprint exports:3,imports:3,sig:irc7i4
- * @lastUpdated 2026-06-24T10:30:05.717Z
+ * @lastUpdated 2026-06-25T10:18:44.121Z
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@ajabadia/satellite-sdk';
+import { logger } from '@ajabadia/satellite-sdk/logger';
 import { DocumentService } from '@/services/document-service';
 
 export const revalidate = 0;

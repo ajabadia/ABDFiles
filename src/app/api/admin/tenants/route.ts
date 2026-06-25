@@ -1,15 +1,18 @@
 /**
- * @purpose Gestiona el solicitud GET para obtener una lista de inquilinos, asegurando que solo los usuarios SUPER_ADMIN puedan acceder a ella.
+ * @purpose Gestiona el solicitud GET para obtener una lista de inquilinos, asegurando que solo los usuarios SUPER_ADMIN tengan acceso a ella.
  * @purpose_en Manages the GET request to retrieve a list of tenants, ensuring only SUPER_ADMIN users can access it.
  * @refactorable false
  * @classification Business Service
  * @complexity Medium
- * @fingerprint exports:2,imports:3,sig:1qazrw9
- * @lastUpdated 2026-06-24T10:30:00.185Z
+ * @fingerprint exports:2,imports:6,sig:16enhor
+ * @lastUpdated 2026-06-25T10:18:25.988Z
  */
 
 import { NextResponse } from 'next/server';
-import { ensureIndustrialAccess, getGlobalModel, logger } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
+import { getGlobalModel } from '@ajabadia/satellite-sdk/db';
+import { logger } from '@ajabadia/satellite-sdk/logger';
+import { assertAccess } from '@/lib/abac';
 import mongoose from 'mongoose';
 
 export const revalidate = 0; // Evitar el cacheado estático de la API
@@ -21,6 +24,7 @@ export async function GET() {
   try {
     // 🛡️ Verificar acceso con rol mínimo ADMIN
     const user = await ensureIndustrialAccess('ADMIN');
+    await assertAccess({ userId: user.id || user.email || 'system', tenantId: user.tenantId, resource: 'admin/tenants', action: 'list' });
     
     // Solo SUPER_ADMIN puede ver todos los tenants
     if (user.role !== 'SUPER_ADMIN') {

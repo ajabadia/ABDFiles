@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * @purpose Renderiza un panel de control para gestionar activos de documentos, incluyendo recuperar, mostrar y eliminar documentos.
- * @purpose_en Renders a dashboard for managing document assets, including fetching, displaying, and deleting documents.
+ * @purpose Gestiona activos documentales mediante la creación de un panel con funciones para obtener, mostrar y eliminar documentos.
+ * @purpose_en Manages document assets by rendering a dashboard with functionalities to fetch, display, and delete documents.
  * @refactorable true (contains too many state variables and UI parts)
  * @classification UI Component
  * @complexity Medium
- * @fingerprint exports:1,imports:5,sig:2whgug
- * @lastUpdated 2026-06-21T14:33:25.885Z
+ * @fingerprint exports:1,imports:5,sig:1qbvehu
+ * @lastUpdated 2026-06-25T10:20:39.659Z
  */
 
 import React, { useState, useEffect } from 'react';
@@ -34,7 +34,15 @@ export default function DashboardClient({ locale }: DashboardClientProps) {
   const t = useTranslations('common');
   const adm = useTranslations('admin');
   const [documents, setDocuments] = useState<DocumentAsset[]>([]);
+  const [activeProvider, setActiveProvider] = useState<string>('—');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/v1/storage/active-provider')
+      .then((r) => r.json())
+      .then((d) => { if (d.provider) setActiveProvider(d.provider); })
+      .catch(() => {});
+  }, []);
 
   const fetchDocuments = async (showLoading = true) => {
     try {
@@ -88,7 +96,7 @@ export default function DashboardClient({ locale }: DashboardClientProps) {
             STORAGE_PROVIDER
           </span>
           <span className="text-3xl font-mono font-black text-[#2dd4bf] uppercase">
-            CLOUDINARY
+            {activeProvider.toUpperCase()}
           </span>
         </div>
         <div className="bg-card border border-border p-6 rounded-none flex flex-col gap-2">

@@ -17,7 +17,7 @@
   "dependencies": {
     "@ajabadia/i18n": "^1.0.0",
     "@ajabadia/ecosystem-widgets": "^1.0.38",
-    "@ajabadia/satellite-sdk": "^1.0.40",
+    "@ajabadia/satellite-sdk": "workspace:*",
     "@ajabadia/styles": "^1.0.46",
     "@aws-sdk/client-s3": "^3.1062.0",
     "@aws-sdk/s3-request-presigner": "^3.1062.0",

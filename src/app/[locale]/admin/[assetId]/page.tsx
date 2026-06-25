@@ -5,12 +5,12 @@
  * @classification UI Component
  * @complexity Medium
  * @fingerprint exports:2,imports:8,sig:711j4g
- * @lastUpdated 2026-06-21T14:33:08.740Z
+ * @lastUpdated 2026-06-25T10:20:24.530Z
  */
 
 import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
-import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk';
+import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
 import { FileText, ArrowLeft } from 'lucide-react';
 import { AdminPageHeader } from '@ajabadia/styles';
 import { GlobalFooter } from '@ajabadia/ecosystem-widgets';
