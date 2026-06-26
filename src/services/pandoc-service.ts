@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona conversión entre formatos de documentos utilizando Pandoc.
+ * @purpose_en Manages conversion between various document formats using Pandoc.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:6,imports:1,sig:1dqojps
+ * @lastUpdated 2026-06-26T16:35:20.807Z
+ */
+
 import { convert, query } from 'pandoc-wasm';
 
 export type PandocFormat =

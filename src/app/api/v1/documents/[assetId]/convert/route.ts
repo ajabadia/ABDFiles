@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona solicitudes de conversión de documentos, asegurando acceso industrial y validando salidas, y procesando opciones de conversión.
+ * @purpose_en Handles document conversion requests, ensuring industrial access, validating outputs, and processing conversion options.
+ * @refactorable true (contains business logic and async operations)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:5,imports:7,sig:b1ko7v
+ * @lastUpdated 2026-06-26T16:35:18.554Z
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureIndustrialAccess } from '@ajabadia/satellite-sdk/auth-middleware';
 import { logger } from '@ajabadia/satellite-sdk/logger';

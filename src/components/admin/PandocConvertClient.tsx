@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * @purpose Gestiona la conversión de documentos utilizando Pandoc, maneja la entrada del usuario, muestra los resultados y proporciona una función de descarga.
+ * @purpose_en Manages the conversion of documents using Pandoc, handling user input, displaying results, and providing download functionality.
+ * @refactorable true (contains too many state variables and UI parts)
+ * @classification UI Component
+ * @complexity Medium
+ * @fingerprint exports:1,imports:2,sig:1xvoe53
+ * @lastUpdated 2026-06-26T16:35:19.817Z
+ */
+
 import React, { useState } from 'react';
 import { FileOutput, X, Download, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
 
