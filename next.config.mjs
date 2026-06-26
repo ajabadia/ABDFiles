@@ -5,16 +5,8 @@ const withNextIntl = createNextIntlPlugin();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  transpilePackages: ['@ajabadia/ecosystem-widgets', '@ajabadia/styles', '@ajabadia/satellite-sdk', 'next-intl'],
-  serverExternalPackages: ['pandoc-wasm'],
-  experimental: {
-    outputFileTracingIncludes: {
-      '/api/**/*': [
-        './node_modules/pandoc-wasm/src/pandoc.wasm',
-        './public/pandoc.wasm',
-      ],
-    },
-  },
+  transpilePackages: ['@ajabadia/ecosystem-widgets', '@ajabadia/styles', 'next-intl'],
+  serverExternalPackages: ['@ajabadia/satellite-sdk'],
 };
 
 export default withNextIntl(nextConfig);

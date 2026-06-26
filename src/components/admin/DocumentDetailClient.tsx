@@ -234,7 +234,7 @@ export default function DocumentDetailClient({ assetId, locale, userRole }: Docu
               >
                 DOWNLOAD_DECRYPTED_FILE
               </a>
-              <PandocConvertClient assetId={doc.assetId} documentTitle={doc.title} />
+              <PandocConvertClient assetId={doc.assetId} documentTitle={doc.title} signedUrl={doc.signedUrl} />
             </div>
           </div>
 

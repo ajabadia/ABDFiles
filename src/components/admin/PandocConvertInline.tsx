@@ -1,23 +1,14 @@
 'use client';
 
-/**
- * @purpose Gestiona la conversión de documentos utilizando Pandoc, maneja la entrada del usuario, muestra los resultados y proporciona una función de descarga.
- * @purpose_en Manages the conversion of documents using Pandoc, handling user input, displaying results, and providing download functionality.
- * @refactorable true (contains too many state variables and UI parts)
- * @classification UI Component
- * @complexity Medium
- * @fingerprint exports:1,imports:2,sig:1xvoe53
- * @lastUpdated 2026-06-26T16:35:19.817Z
- */
-
 import React, { useState } from 'react';
 import { FileOutput, X, Download, Loader2, AlertTriangle, CheckCircle, Globe, Monitor } from 'lucide-react';
 import { convertLocally, isBrowserPandocSupported } from '@/services/pandoc-browser';
 
-interface PandocConvertClientProps {
-  assetId: string;
-  documentTitle?: string;
-  signedUrl?: string;
+interface PandocConvertInlineProps {
+  content: string;
+  mimeType?: string;
+  fileName?: string;
+  inputFormat?: string;
 }
 
 const FORMAT_OPTIONS = [
@@ -38,7 +29,7 @@ const FORMAT_OPTIONS = [
   { value: 'gfm', label: 'GFM (GitHub Markdown)' },
 ];
 
-export default function PandocConvertClient({ assetId, documentTitle, signedUrl }: PandocConvertClientProps) {
+export default function PandocConvertInline({ content, mimeType, fileName, inputFormat }: PandocConvertInlineProps) {
   const [open, setOpen] = useState(false);
   const [toFormat, setToFormat] = useState('html');
   const [toc, setToc] = useState(false);
@@ -50,35 +41,31 @@ export default function PandocConvertClient({ assetId, documentTitle, signedUrl 
   const [warnings, setWarnings] = useState<string[]>([]);
   const browserSupported = isBrowserPandocSupported();
 
-  const handleConvert = async () => {
+  const handleServerConvert = async () => {
     setLoading(true);
     setError(null);
     setResult(null);
     setWarnings([]);
 
     try {
-      const res = await fetch(`/api/v1/documents/${assetId}/convert`, {
+      const res = await fetch('/api/v1/convert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          content,
+          mimeType: mimeType || 'text/plain',
+          from: inputFormat,
           to: toFormat,
-          toc,
           standalone,
+          toc,
         }),
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Conversion failed');
-      }
+      if (!res.ok) throw new Error(data.error || 'Conversion failed');
 
       setResult(data.output);
       setWarnings(data.warnings || []);
-
-      if (data.stderr) {
-        setWarnings((prev) => [...prev, ...data.stderr.split('\n').filter(Boolean)]);
-      }
     } catch (err: unknown) {
       const e = err as Error;
       setError(e.message);
@@ -88,26 +75,19 @@ export default function PandocConvertClient({ assetId, documentTitle, signedUrl 
   };
 
   const handleLocalConvert = async () => {
-    if (!signedUrl) {
-      setError('Document content not available for local conversion');
-      return;
-    }
     setLocalLoading(true);
     setError(null);
     setResult(null);
     setWarnings([]);
 
     try {
-      const docRes = await fetch(signedUrl);
-      if (!docRes.ok) throw new Error('Failed to fetch document content');
-      const content = await docRes.text();
-
       const data = await convertLocally(content, {
-        from: undefined,
+        from: inputFormat,
         to: toFormat,
         standalone,
         toc,
       });
+
       setResult(data.output);
       setWarnings(data.warnings || []);
       if (data.stderr) {
@@ -124,12 +104,12 @@ export default function PandocConvertClient({ assetId, documentTitle, signedUrl 
   const handleDownload = () => {
     if (!result) return;
     const ext = toFormat === 'markdown' ? 'md' : toFormat === 'plain' ? 'txt' : toFormat;
-    const filename = `${documentTitle || assetId}.${ext}`;
+    const name = fileName || 'converted';
     const blob = new Blob([result], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename;
+    a.download = `${name}.${ext}`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -198,7 +178,7 @@ export default function PandocConvertClient({ assetId, documentTitle, signedUrl 
 
       <div className="flex gap-3">
         <button
-          onClick={handleConvert}
+          onClick={handleServerConvert}
           disabled={loading || localLoading}
           className="btn-primary-console text-[10px] font-mono tracking-widest uppercase py-3 px-6 inline-flex items-center justify-center gap-2 disabled:opacity-50"
         >

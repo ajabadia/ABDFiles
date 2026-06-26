@@ -1,7 +1,6 @@
-import { createRequire } from 'module';
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { createPandocInstance } from './pandoc-core';
 
 export type PandocFormat =
   | 'markdown' | 'md'
@@ -46,62 +45,80 @@ export interface PandocInfo {
 }
 
 type PandocInstance = {
-  convert: (options: Record<string, unknown>, stdin?: string | null, files?: Record<string, Blob | string>) => Promise<{ stdout: string; stderr: string; warnings: string[] }>;
-  query: (options: Record<string, boolean | string>) => Promise<{ stdout: string }>;
+  convert: (
+    options: Record<string, unknown>,
+    stdin?: string | null,
+    files?: Record<string, string | Blob>,
+  ) => Promise<{ stdout: string; stderr: string; warnings: string[] }>;
+  query: (options: Record<string, unknown>) => { stdout: string };
 };
 
 let instancePromise: Promise<PandocInstance> | null = null;
+let initError: Error | null = null;
 
-function findWasmPath(): string {
-  const candidates = [
-    join(process.cwd(), 'public', 'pandoc.wasm'),
-    join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'public', 'pandoc.wasm'),
-    join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'pandoc.wasm'),
-  ];
+const CDN_WASM_URL = 'https://cdn.jsdelivr.net/npm/pandoc-wasm@1.1.0/dist/pandoc.wasm';
 
-  for (const p of candidates) {
-    if (existsSync(p)) return p;
+async function loadWasmBinary(): Promise<ArrayBuffer> {
+  const localPath = join(process.cwd(), 'public', 'pandoc.wasm');
+  if (existsSync(localPath)) {
+    return readFileSync(localPath).buffer;
   }
 
-  const req = createRequire(import.meta.url);
-  const pkgEntry = req.resolve('pandoc-wasm');
-  const pkgDir = dirname(pkgEntry);
-  const wasmInPkg = join(pkgDir, 'pandoc.wasm');
-  if (existsSync(wasmInPkg)) return wasmInPkg;
+  const tmpPath = '/tmp/pandoc.wasm';
+  if (existsSync(tmpPath)) {
+    return readFileSync(tmpPath).buffer;
+  }
 
-  throw new Error('pandoc.wasm not found in any expected location');
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5005';
+
+  try {
+    const res = await fetch(`${baseUrl}/pandoc.wasm`, { signal: AbortSignal.timeout(10000) });
+    if (res.ok) {
+      const buf = await res.arrayBuffer();
+      try { writeFileSync(tmpPath, Buffer.from(buf)); } catch {}
+      return buf;
+    }
+  } catch {}
+
+  const cdnRes = await fetch(CDN_WASM_URL, { signal: AbortSignal.timeout(30000) });
+  if (!cdnRes.ok) throw new Error(
+    `Failed to load pandoc.wasm from CDN (HTTP ${cdnRes.status}). ` +
+    'Run `node scripts/copy-pandoc-wasm.mjs` locally to copy it to public/.'
+  );
+  const buf = await cdnRes.arrayBuffer();
+  try { writeFileSync(tmpPath, Buffer.from(buf)); } catch {}
+  return buf;
 }
 
 async function getPandoc(): Promise<PandocInstance> {
   if (instancePromise) return instancePromise;
+  if (initError) throw initError;
 
   instancePromise = (async () => {
-    const wasmPath = findWasmPath();
-    const wasmBinary = readFileSync(wasmPath).buffer;
-
-    const __filename = fileURLToPath(import.meta.url);
-    const req = createRequire(__filename);
-    const pkgEntry = req.resolve('pandoc-wasm');
-    const pkgDir = dirname(pkgEntry);
-    const coreUrl = join(pkgDir, 'core.js');
-
-    const coreModule = await import(pathToFileURL(coreUrl).href);
-    const instance = await coreModule.createPandocInstance(wasmBinary);
-
+    const wasmBinary = await loadWasmBinary();
+    const instance = await createPandocInstance(wasmBinary);
     return {
       convert: instance.convert,
       query: instance.query,
-    };
+    } as PandocInstance;
   })();
 
-  return instancePromise;
+  try {
+    return await instancePromise;
+  } catch (e) {
+    initError = e as Error;
+    instancePromise = null;
+    throw e;
+  }
 }
 
 export async function getPandocInfo(): Promise<PandocInfo> {
   const pandoc = await getPandoc();
-  const versionResult = await pandoc.query({ 'version': true });
-  const inputResult = await pandoc.query({ 'list-input-formats': true });
-  const outputResult = await pandoc.query({ 'list-output-formats': true });
+  const versionResult = pandoc.query({ version: true });
+  const inputResult = pandoc.query({ 'list-input-formats': true });
+  const outputResult = pandoc.query({ 'list-output-formats': true });
 
   return {
     version: (versionResult.stdout || '').trim(),
@@ -123,7 +140,7 @@ function isTextFormat(format: string): boolean {
 export async function convertDocument(
   content: string | Buffer,
   mimeType: string,
-  options: ConvertOptions
+  options: ConvertOptions,
 ): Promise<ConvertResult> {
   const pandoc = await getPandoc();
 
@@ -146,7 +163,7 @@ export async function convertDocument(
   }
 
   let stdin: string | null = null;
-  const files: Record<string, Blob | string> = {};
+  const files: Record<string, string | Blob> = {};
 
   const inputExt = options.from || mimeTypeToFormat(mimeType);
 
@@ -190,4 +207,8 @@ const MIME_FORMAT_MAP: Record<string, string> = {
 
 function mimeTypeToFormat(mimeType: string): string {
   return MIME_FORMAT_MAP[mimeType] || 'markdown';
+}
+
+export function isPandocAvailable(): boolean {
+  return existsSync(join(process.cwd(), 'public', 'pandoc.wasm'));
 }
