@@ -1,11 +1,11 @@
 /**
- * @purpose Renderiza el layout para una página localizada específica en la aplicación ABDFiles, incluyendo navegación, marca y componentes de análisis.
+ * @purpose Renderiza el layout para una página localizada específicamente en la aplicación ABDFiles, incluyendo componentes de navegación, marca y análisis.
  * @purpose_en Renders the layout for a locale-specific page in the ABDFiles application, including navigation, branding, and analytics components.
  * @refactorable false
  * @classification UI Component
  * @complexity Medium
- * @fingerprint exports:1,imports:11,sig:1c5rshr
- * @lastUpdated 2026-06-25T10:20:31.882Z
+ * @fingerprint exports:1,imports:12,sig:1a9pe4z
+ * @lastUpdated 2026-06-26T10:00:07.690Z
  */
 
 import { NextIntlClientProvider } from "next-intl";
