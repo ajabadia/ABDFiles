@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 5005 --webpack",
-    "prebuild": "node ./scripts/clean-quiz.js",
+    "postinstall": "node scripts/copy-pandoc-wasm.mjs",
+    "prebuild": "node scripts/copy-pandoc-wasm.mjs && node ./scripts/clean-quiz.js",
     "build": "next build --webpack",
     "start": "next start -p 5005",
     "lint": "eslint",
