@@ -9,7 +9,10 @@ const nextConfig = {
   serverExternalPackages: ['pandoc-wasm'],
   experimental: {
     outputFileTracingIncludes: {
-      '/api/**/*': ['./node_modules/pandoc-wasm/src/pandoc.wasm'],
+      '/api/**/*': [
+        './node_modules/pandoc-wasm/src/pandoc.wasm',
+        './public/pandoc.wasm',
+      ],
     },
   },
 };

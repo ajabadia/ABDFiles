@@ -1,14 +1,7 @@
-/**
- * @purpose Gestiona conversión entre formatos de documentos utilizando Pandoc.
- * @purpose_en Manages conversion between various document formats using Pandoc.
- * @refactorable true (contains too many state variables and UI parts)
- * @classification Business Service
- * @complexity Medium
- * @fingerprint exports:6,imports:1,sig:1dqojps
- * @lastUpdated 2026-06-26T16:35:20.807Z
- */
-
-import { convert, query } from 'pandoc-wasm';
+import { createRequire } from 'module';
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 export type PandocFormat =
   | 'markdown' | 'md'
@@ -52,40 +45,69 @@ export interface PandocInfo {
   outputFormats: string[];
 }
 
-let infoCache: PandocInfo | null = null;
+type PandocInstance = {
+  convert: (options: Record<string, unknown>, stdin?: string | null, files?: Record<string, Blob | string>) => Promise<{ stdout: string; stderr: string; warnings: string[] }>;
+  query: (options: Record<string, boolean | string>) => Promise<{ stdout: string }>;
+};
 
-export async function getPandocInfo(): Promise<PandocInfo> {
-  if (infoCache) return infoCache;
-  const result = await query({ 'version': true });
-  const inputFormats = await query({ 'list-input-formats': true });
-  const outputFormats = await query({ 'list-output-formats': true });
-  infoCache = {
-    version: (result.stdout || '').trim(),
-    inputFormats: (inputFormats.stdout || '').trim().split('\n'),
-    outputFormats: (outputFormats.stdout || '').trim().split('\n'),
-  };
-  return infoCache;
+let instancePromise: Promise<PandocInstance> | null = null;
+
+function findWasmPath(): string {
+  const candidates = [
+    join(process.cwd(), 'public', 'pandoc.wasm'),
+    join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'public', 'pandoc.wasm'),
+    join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'pandoc.wasm'),
+  ];
+
+  for (const p of candidates) {
+    if (existsSync(p)) return p;
+  }
+
+  const req = createRequire(import.meta.url);
+  const pkgEntry = req.resolve('pandoc-wasm');
+  const pkgDir = dirname(pkgEntry);
+  const wasmInPkg = join(pkgDir, 'pandoc.wasm');
+  if (existsSync(wasmInPkg)) return wasmInPkg;
+
+  throw new Error('pandoc.wasm not found in any expected location');
 }
 
-function buildOptions(opts: ConvertOptions) {
-  const args: Record<string, unknown> = {
-    from: opts.from,
-    to: opts.to,
+async function getPandoc(): Promise<PandocInstance> {
+  if (instancePromise) return instancePromise;
+
+  instancePromise = (async () => {
+    const wasmPath = findWasmPath();
+    const wasmBinary = readFileSync(wasmPath).buffer;
+
+    const __filename = fileURLToPath(import.meta.url);
+    const req = createRequire(__filename);
+    const pkgEntry = req.resolve('pandoc-wasm');
+    const pkgDir = dirname(pkgEntry);
+    const coreUrl = join(pkgDir, 'core.js');
+
+    const coreModule = await import(pathToFileURL(coreUrl).href);
+    const instance = await coreModule.createPandocInstance(wasmBinary);
+
+    return {
+      convert: instance.convert,
+      query: instance.query,
+    };
+  })();
+
+  return instancePromise;
+}
+
+export async function getPandocInfo(): Promise<PandocInfo> {
+  const pandoc = await getPandoc();
+  const versionResult = await pandoc.query({ 'version': true });
+  const inputResult = await pandoc.query({ 'list-input-formats': true });
+  const outputResult = await pandoc.query({ 'list-output-formats': true });
+
+  return {
+    version: (versionResult.stdout || '').trim(),
+    inputFormats: (inputResult.stdout || '').trim().split('\n'),
+    outputFormats: (outputResult.stdout || '').trim().split('\n'),
   };
-  if (opts.standalone) args.standalone = true;
-  if (opts.embedResources) args['embed-resources'] = true;
-  if (opts.toc) args.toc = true;
-  if (opts.tocDepth) args['toc-depth'] = opts.tocDepth;
-  if (opts.highlightStyle) args['highlight-style'] = opts.highlightStyle;
-  if (opts.citeMethod) args['citeproc'] = true;
-  if (opts.wrap) args.wrap = opts.wrap;
-  if (opts.columns) args.columns = opts.columns;
-  if (opts.extraArgs) {
-    for (const [k, v] of Object.entries(opts.extraArgs)) {
-      args[k] = v;
-    }
-  }
-  return args as import('pandoc-wasm').PandocOptions;
 }
 
 function isTextFormat(format: string): boolean {
@@ -103,7 +125,25 @@ export async function convertDocument(
   mimeType: string,
   options: ConvertOptions
 ): Promise<ConvertResult> {
-  const pandocOptions = buildOptions(options);
+  const pandoc = await getPandoc();
+
+  const pandocOptions: Record<string, unknown> = {
+    from: options.from,
+    to: options.to,
+  };
+  if (options.standalone) pandocOptions.standalone = true;
+  if (options.embedResources) pandocOptions['embed-resources'] = true;
+  if (options.toc) pandocOptions.toc = true;
+  if (options.tocDepth) pandocOptions['toc-depth'] = options.tocDepth;
+  if (options.highlightStyle) pandocOptions['highlight-style'] = options.highlightStyle;
+  if (options.citeMethod) pandocOptions.citeproc = true;
+  if (options.wrap) pandocOptions.wrap = options.wrap;
+  if (options.columns) pandocOptions.columns = options.columns;
+  if (options.extraArgs) {
+    for (const [k, v] of Object.entries(options.extraArgs)) {
+      pandocOptions[k] = v;
+    }
+  }
 
   let stdin: string | null = null;
   const files: Record<string, Blob | string> = {};
@@ -119,7 +159,7 @@ export async function convertDocument(
     pandocOptions['file-scope'] = true;
   }
 
-  const result = await convert(pandocOptions, stdin, files);
+  const result = await pandoc.convert(pandocOptions, stdin, files);
 
   return {
     output: result.stdout || '',
