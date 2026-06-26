@@ -13,6 +13,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { CheckCircle, AlertTriangle, Trash2, Shield, Lock, Unlock, UploadCloud, RefreshCw } from 'lucide-react';
+import PandocConvertClient from './PandocConvertClient';
 
 interface DocumentDetailClientProps {
   assetId: string;
@@ -224,7 +225,7 @@ export default function DocumentDetailClient({ assetId, locale, userRole }: Docu
                 <span className="font-bold uppercase text-[#f59e0b]">{doc.sensitivityLevel}</span>
               </div>
             </div>
-            <div className="pt-4 border-t border-border/40">
+            <div className="pt-4 border-t border-border/40 flex flex-wrap gap-4">
               <a
                 href={doc.signedUrl}
                 target="_blank"
@@ -233,6 +234,7 @@ export default function DocumentDetailClient({ assetId, locale, userRole }: Docu
               >
                 DOWNLOAD_DECRYPTED_FILE
               </a>
+              <PandocConvertClient assetId={doc.assetId} documentTitle={doc.title} />
             </div>
           </div>
 

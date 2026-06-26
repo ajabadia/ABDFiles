@@ -12,12 +12,14 @@
     "full-audit": "powershell -File ./scripts/abd-audit.ps1",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "powershell -ExecutionPolicy Bypass -File scripts/run-e2e.ps1"
+    "test:e2e": "powershell -ExecutionPolicy Bypass -File scripts/run-e2e.ps1",
+    "pandoc:check": "node scripts/check-pandoc-version.mjs",
+    "pandoc:convert": "curl -s -X POST 'http://localhost:5005/api/v1/documents/ASSET_ID/convert' -H 'Content-Type: application/json' -d '{\"to\":\"html\"}'"
   },
   "dependencies": {
     "@ajabadia/ecosystem-widgets": "^1.0.38",
     "@ajabadia/i18n": "^1.0.37",
-    "@ajabadia/satellite-sdk": "^1.0.81",
+    "@ajabadia/satellite-sdk": "^1.0.90",
     "@ajabadia/styles": "^1.0.46",
     "@aws-sdk/client-s3": "^3.1062.0",
     "@aws-sdk/s3-request-presigner": "^3.1062.0",
@@ -35,6 +37,7 @@
     "next-intl": "4.13.0",
     "next-themes": "0.4.6",
     "nextjs-toploader": "3.9.17",
+    "pandoc-wasm": "^1.1.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.6",
     "react-dom": "19.2.6",
