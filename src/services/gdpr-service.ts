@@ -1,3 +1,13 @@
+/**
+ * @purpose Gestiona el exportación de datos del usuario en conformidad con las regulaciones de GDPR, incluyendo documentos, versiones, eventos, enlaces de espacio y retenciones legales.
+ * @purpose_en Manages the export of user data in compliance with GDPR regulations, including documents, versions, events, space links, and legal holds.
+ * @refactorable true (contains multiple responsibilities such as database queries, file generation, and storage service interactions)
+ * @classification Business Service
+ * @complexity Medium
+ * @fingerprint exports:1,imports:3,sig:1hzqwsx
+ * @lastUpdated 2026-06-26T06:17:19.578Z
+ */
+
 import JSZip from 'jszip';
 import { connectDB, getTenantConnection } from '@ajabadia/satellite-sdk/db';
 import { StorageService } from './storage-service';

@@ -1,3 +1,15 @@
+/**
+ * @purpose Gestiona los escuchadores de eventos para cambios en el conectador de almacenamiento y procesa estos eventos con debouncing.
+ * @purpose_en Manages event listeners for storage connector changes and processes these events with debouncing.
+ * @refactorable false
+ * @classification Business Service
+ * @complexity Low
+ * @fingerprint exports:1,imports:1,sig:1wq8drc
+ * @lastUpdated 2026-06-26T06:17:14.678Z
+ */
+
+'use server';
+
 import { createConsumer, SystemEventType } from '@ajabadia/satellite-sdk/event-bus';
 
 let lastProcessed = 0;
@@ -19,7 +31,7 @@ export async function processConnectorEvents(): Promise<void> {
   await consumer.processPending();
 }
 
-export function createConnectorConsumer() {
+function createConnectorConsumer() {
   return consumer;
 }
 
