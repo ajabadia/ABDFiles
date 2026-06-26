@@ -17,6 +17,7 @@ import { SidebarNavigation } from "@/components/layout/SidebarNavigation";
 import { SystemSettings } from "@/components/ui/SystemSettings";
 import { TenantSelector } from "@/components/ui/TenantSelector";
 import { AnalyticsCommandPalette } from "@/components/layout/AnalyticsCommandPalette";
+import { EventBusBridge } from "@/components/EventBusBridge";
 
 import { getIndustrialSession } from '@ajabadia/satellite-sdk/auth-middleware';
 import { resolveTenantBranding } from "@ajabadia/satellite-sdk";
@@ -50,6 +51,7 @@ export default async function LocaleLayout({
           settingsSlot={<SystemSettings isAuthenticated={session.authenticated} />}
         />
         <AnalyticsCommandPalette />
+        <EventBusBridge />
 
         {children}
         <Toaster

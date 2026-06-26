@@ -15,8 +15,8 @@
     "test:e2e": "powershell -ExecutionPolicy Bypass -File scripts/run-e2e.ps1"
   },
   "dependencies": {
-    "@ajabadia/i18n": "^1.0.0",
     "@ajabadia/ecosystem-widgets": "^1.0.38",
+    "@ajabadia/i18n": "^1.0.0",
     "@ajabadia/satellite-sdk": "workspace:*",
     "@ajabadia/styles": "^1.0.46",
     "@aws-sdk/client-s3": "^3.1062.0",
@@ -28,6 +28,7 @@
     "clsx": "2.1.1",
     "fast-json-stable-stringify": "2.1.0",
     "googleapis": "^173.0.0",
+    "jszip": "^3.10.1",
     "lucide-react": "1.17.0",
     "mongoose": "9.6.3",
     "next": "16.2.6",
